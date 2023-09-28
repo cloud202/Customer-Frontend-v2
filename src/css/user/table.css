@@ -1,0 +1,23 @@
+.table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+.table-data {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+    
+  }
+
+.table-data th{
+  background-color: #7e7e7ef5;
+    color: rgb(245, 245, 245);
+    font-size: small;
+}
+
+.table-data-td{
+  color: rgb(61, 61, 61);
+  font-size: large;
+}

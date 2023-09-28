@@ -1,0 +1,18 @@
+.module-table{
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    border: 1px solid;
+}
+
+.module-heading{
+    background-color: gray;
+    color: rgb(255, 255, 255);
+    border: 1px solid rgb(48, 48, 48);
+    font-size: medium;
+    
+}
+
+.module-data{
+    border: 1px solid rgb(48, 48, 48);
+}

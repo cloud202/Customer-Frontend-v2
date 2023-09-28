@@ -1,0 +1,37 @@
+.table-modern {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    border: none;
+    border-radius: 10px;
+    -webkit-box-shadow: 4px 4px 10px -3px rgba(0,0,0,0.45);
+    -moz-box-shadow: 4px 4px 10px -3px rgba(0,0,0,0.45);
+    box-shadow: 4px 4px 10px -3px rgba(0,0,0,0.45);
+  }
+  
+  td, th {
+    border: 2px solid #ffffff;
+    text-align: left;
+    padding: 8px;
+  }
+  td{
+    font-weight: 500;
+  }
+  th{
+    color: rgb(61, 61, 61);
+    font-size: larger;
+    font-weight: 400;
+  }
+
+/* Define a CSS class for alternating rows */
+.alternating-row {
+
+  background-color: #6e6e6e; /* Background color for even rows */
+  color: rgb(245, 245, 245);
+}
+
+.alternating-row-two{
+  background-color: #7e7e7ef5; /* Background color for even rows */
+  color: rgb(245, 245, 245);
+
+}
