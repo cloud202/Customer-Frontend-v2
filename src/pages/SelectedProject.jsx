@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { setPhasesData } from '../features/tabs/phases'
+import { resetFormData } from '../features/formData/dueDiligenceForm'
 
 const SelectedProject = () => {
   const [currPage,setCurrPage] = useState(1);
@@ -20,6 +21,7 @@ const SelectedProject = () => {
   const projectData = useSelector((state)=> state.selectDueDiligence.projectData);
   const projectId = useSelector((state)=> state.selectDueDiligence.projectId);
   const formData = useSelector((state)=> state.dueDiligence.formData);
+  const customerId = useSelector((state)=> state.token.customerId)
 
   const dispatch = useDispatch();
 
@@ -28,11 +30,10 @@ const SelectedProject = () => {
       const project = {
         project_name: formData.name
       }
-      const customerId = "823kdakj203k42s";
       const {data} = await axios.post(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/add/${projectId}`,project);
       const response =  await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/${data._id}/phases`);
-      console.log("Response",response.data);
       dispatch(setPhasesData(response.data));
+      dispatch(resetFormData());
     }catch(e){
       console.log("Error setting up customer db",e);
      }
