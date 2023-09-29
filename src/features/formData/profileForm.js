@@ -14,6 +14,7 @@ const initialState = {
             phoneNumber: '',
         }
     }
+    
 }
 
 export const profileFormSlice = createSlice({
@@ -37,10 +38,14 @@ export const profileFormSlice = createSlice({
                 [field] : value
             }
             }
+        },
+        resetProfileData: (state,action)=>{
+            state.profileData = initialState.profileData
+
         }
     }
 })
 
-export const {setProfileData} = profileFormSlice.actions;
+export const {setProfileData,resetProfileData} = profileFormSlice.actions;
 
 export default profileFormSlice.reducer

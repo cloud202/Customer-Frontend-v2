@@ -64,7 +64,7 @@ useEffect(()=>{
     <>
           <FormControl mb={{base: '8px',sm: '8px', lg: '10px'}}>
             <FormLabel fontSize={{base: '14px',sm: '14px',md: '16px', lg: '17px'}} color='gray.700'>Name</FormLabel>
-            <Input w='100%' type="text" placeholder="Enter your name" name='customer_name' value={profileData.customer_name} onChange={(e)=> handleInputChange(e)}/>
+            <Input isDisabled={true} w='100%' type="text" placeholder="Enter your name" name='customer_name' value={profileData.customer_name} onChange={(e)=> handleInputChange(e)}/>
             </FormControl>
 
           <FormControl mb={{base: '8px',sm: '8px', lg: '10px'}}>
@@ -77,7 +77,7 @@ useEffect(()=>{
               </HStack>
               </MenuButton>
               <MenuList style={{height: '300px',overflow: 'auto'}}>
-                {roles.map((role,ind)=> <MenuItem onClick={()=> handleSelect('customer_role',role)}>{role}</MenuItem>)}
+                {roles.map((role,ind)=> <MenuItem key={ind} onClick={()=> handleSelect('customer_role',role)}>{role}</MenuItem>)}
               </MenuList>
           </Menu>
             </FormControl>
@@ -153,7 +153,7 @@ useEffect(()=>{
 
           <FormControl mb={{base: '8px',sm: '8px', lg: '10px'}}>
             <FormLabel fontSize={{base: '14px',sm: '14px',md: '16px', lg: '17px'}} color='gray.700'>Business Email</FormLabel>
-            <Input w='100%' type="email" placeholder="Enter business email" name='customer_email' value={profileData.customer_email} onChange={(e)=> handleInputChange(e)}/>
+            <Input isDisabled={true} w='100%' type="email" placeholder="Enter business email" name='customer_email' value={profileData.customer_email} onChange={(e)=> handleInputChange(e)}/>
             </FormControl>
 
           <FormControl mb={{base: '8px',sm: '8px', lg: '10px'}}>

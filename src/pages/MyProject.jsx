@@ -1,25 +1,30 @@
 import React, { useEffect, useState } from 'react'
 import Sidebar from '../components/Sidebar'
-import { Box, Card, CardBody, CardHeader, Flex, Grid, GridItem, Heading, Stack, StackDivider, Text } from '@chakra-ui/react'
+import { Box, Button, Card, CardBody, CardHeader, Flex, Grid, GridItem, Heading, Stack, StackDivider, Text } from '@chakra-ui/react'
 import { Navbar } from '../components/Navbar'
 import axios from 'axios'
+import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 const MyProject = () => {
     const [project,setProject] = useState();
+    const customerId = useSelector((state)=> state.token.customerId)
+    const [projectFound,setProjectFound] = useState(false);
+
 
     async function fetchData (){
-        const customer_id = "823kdakj203k42s";
-        const {data} = await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customer_id}/project/allProjects`)
-        setProject(data);
+        try{
+            const {data} = await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/allProjects`)
+            setProject(data);
+            setProjectFound(true);
+        }catch(e){
+            console.log("No project found",e);
+        }
         
     }
     useEffect(()=>{
         fetchData();
     },[])
-
-    setTimeout(() => {
-        console.log(project)
-    }, 3000);
 
   return (
     <>
@@ -36,9 +41,19 @@ const MyProject = () => {
         List of My Projects
       </Text>
 
-    <Flex p='10px' className='box-shadow' gap={4} flexWrap='wrap' justifyContent='space-around'>
+    <Flex p='10px' className='box-shadow' gap={3} flexWrap='wrap' justifyContent='flex-start'>
+        {!projectFound && 
+        <Flex flexDir='column' w='100%' h='150px' alignItems='center' justifyContent='center' gap={4}>
+        <Text fontSize='xl'>
+            Looks like you haven't created any project yet. Start your Modernization Journey with New Project 
+        </Text>
+        <Link to='/newproject'>
+            <Button colorscheme='blue'>New Project</Button>
+        </Link>
+        </Flex>
+        }   
         {project && project.map((project,ind)=>
-            <Card key={ind} mb='15px' bg='#40a798' _hover={{ transform: 'scale(1.03)', transition: 'transform 0.3s ease' }} >
+            <Card key={ind} flexGrow='1' flexBasis='300px' justifyContent='flex-start' mb='6px' bg='#40a798' _hover={{ transform: 'scale(1.03)', transition: 'transform 0.3s ease' }} >
             <CardHeader>
                 <Heading size='md' color='gray.100'>{project.project_name.toUpperCase()}</Heading>
             </CardHeader>
@@ -76,7 +91,6 @@ const MyProject = () => {
             </Card>
         )}
         
-    
     </Flex>
 
     </GridItem>
