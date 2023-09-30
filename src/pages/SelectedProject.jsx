@@ -5,7 +5,6 @@ import Sidebar from '../components/Sidebar'
 import { ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons'
 import DueDiligence from '../components/DueDiligence'
 import SelectTemplate from '../components/SelectTemplate'
-import SelectedTemplatePage from '../components/SelectedTemplatePage'
 import SettingsSuggestIcon from '@mui/icons-material/SettingsSuggest';
 import ProjectTab from '../components/ProjectTab'
 import Roadmap from '../components/Roadmap'
@@ -20,7 +19,7 @@ const SelectedProject = () => {
   const projectData = useSelector((state)=> state.selectDueDiligence.projectData);
   const projectId = useSelector((state)=> state.selectDueDiligence.projectId);
   const formData = useSelector((state)=> state.dueDiligence.formData);
-  const customerId = useSelector((state)=> state.token.customerId)
+  const customerId = useSelector((state)=> state.token.customerId);
 
   const dispatch = useDispatch();
 

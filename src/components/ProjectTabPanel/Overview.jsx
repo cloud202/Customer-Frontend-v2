@@ -16,16 +16,16 @@ const Overview = () => {
                     </Text>
                     
                     <Text pt='2' fontWeight={500}>
-                    <span style={{ color: 'gray' }}>Project Type : </span>{formData.cloudApproach}
+                    <span style={{ color: 'gray' }}>Project Type : </span>{formData.cloudApproach!=="Select an option"? formData.cloudApproach: "Not available"}
                     </Text>
                     <Text fontWeight={500}>
-                    <span style={{ color: 'gray' }}>Industry : </span>{formData.industry}
+                    <span style={{ color: 'gray' }}>Industry : </span>{formData.industry!=="Select an option"? formData.industry: "Not available"}
                     </Text>
                     <Text fontWeight={500}>
-                    <span style={{ color: 'gray' }}>Workload Type : </span>{formData.workloadType.map((workload)=> workload).join(', ')}
+                    <span style={{ color: 'gray' }}>Workload Type : </span>{formData.workloadType.length>0 ? formData.workloadType.map((workload)=> workload).join(', '): 'Not available'}
                     </Text>
                     <Text fontWeight={500}>
-                    <span style={{ color: 'gray' }}>Tech Stack : </span>{formData.techStack.map((tech)=> tech).join(', ')}
+                    <span style={{ color: 'gray' }}>Tech Stack : </span>{formData.techStack.length>0 ? formData.techStack.map((tech)=> tech).join(', '): 'Not available'}
                     </Text>
                     
                 </Box>

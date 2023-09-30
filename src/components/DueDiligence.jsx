@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import '../css/user/boxShadow.css'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux';
-import { setFormData, setPostData, setPostDatas } from '../features/formData/dueDiligenceForm';
+import { resetFormData, setFormData, setPostData, setPostDatas } from '../features/formData/dueDiligenceForm';
 import ClearIcon from '@mui/icons-material/Clear';
 import { useToast } from '@chakra-ui/react';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
