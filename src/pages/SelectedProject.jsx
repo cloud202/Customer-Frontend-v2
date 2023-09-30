@@ -13,7 +13,6 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { setPhasesData } from '../features/tabs/phases'
-import { resetFormData } from '../features/formData/dueDiligenceForm'
 
 const SelectedProject = () => {
   const [currPage,setCurrPage] = useState(1);
@@ -33,7 +32,7 @@ const SelectedProject = () => {
       const {data} = await axios.post(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/add/${projectId}`,project);
       const response =  await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/${data._id}/phases`);
       dispatch(setPhasesData(response.data));
-      dispatch(resetFormData());
+      
     }catch(e){
       console.log("Error setting up customer db",e);
      }

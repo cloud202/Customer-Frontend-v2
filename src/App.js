@@ -30,7 +30,6 @@ function App() {
     try{
       const {data} = await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/registration/email/${userInfo.email}`);
       dispatch(setCustomerId(data._id));
-      console.log("Dataid",data._id);
 
       if(data?.customer_role){
         dispatch(setProfileData({field:"customer_role",value: data.customer_role}));

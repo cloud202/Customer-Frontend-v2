@@ -10,6 +10,7 @@ const MyProject = () => {
     const [project,setProject] = useState();
     const customerId = useSelector((state)=> state.token.customerId)
     const [projectFound,setProjectFound] = useState(false);
+    const [loading,setLoading] = useState(true);
 
 
     async function fetchData (){
@@ -19,7 +20,9 @@ const MyProject = () => {
             setProjectFound(true);
         }catch(e){
             console.log("No project found",e);
+
         }
+        setLoading(false);
         
     }
     useEffect(()=>{
