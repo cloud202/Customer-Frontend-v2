@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import '../css/user/boxShadow.css'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux';
-import { setFormData, setPostData, setPostDatas } from '../features/formData/dueDiligenceForm';
+import { resetFormData, setFormData, setPostData, setPostDatas } from '../features/formData/dueDiligenceForm';
 import ClearIcon from '@mui/icons-material/Clear';
 import { useToast } from '@chakra-ui/react';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
@@ -157,79 +157,6 @@ const DueDiligence = () => {
     }, [searchInputTechStack, techStack]);
     
   return (
-    // <Flex direction="column" p='20px' className='box-shadow'>
-    //     <FormControl mb={{base: '8px',sm: '8px', lg: '20px'}} isRequired>
-    //         <HStack>
-    //       <FormLabel w='25%' fontSize={{base: '14px',sm: '14px',md: '16px', lg: '17px'}} color='gray.600'>Template Name</FormLabel>
-    //       <Input w='70%' type="text" placeholder="Enter template name"/>
-    //         </HStack>
-    //     </FormControl>
-
-    //     <FormControl mb={{base: '8px',sm: '8px', lg: '20px'}} isRequired>
-    //         <HStack>
-    //       <FormLabel w='25%' fontSize={{base: '14px',sm: '14px',md: '16px', lg: '17px'}} color='gray.600'>Applications/Workloads in scope</FormLabel>
-    //       <Menu>
-    //         <MenuButton w='70%' as={Button} variant="outline" colorScheme="gray" rightIcon={<ChevronDownIcon />}>
-    //           Select an option
-    //         </MenuButton>
-    //         <MenuList>
-    //             <MenuItem>Huehuee</MenuItem>
-    //             <MenuItem>Haha</MenuItem>
-    //             <MenuItem>Ha</MenuItem>
-    //         </MenuList>
-    //       </Menu>
-    //         </HStack>
-    //     </FormControl>
-
-    //     <FormControl mb={{base: '8px',sm: '8px', lg: '20px'}} isRequired>
-    //         <HStack>
-    //       <FormLabel w='25%' fontSize={{base: '14px',sm: '14px',md: '16px', lg: '17px'}} color='gray.600'>Cloud Adoption Approach</FormLabel>
-    //       <Menu>
-    //         <MenuButton w='70%' as={Button} variant="outline" colorScheme="gray" rightIcon={<ChevronDownIcon />}>
-    //         Select an option
-    //         </MenuButton>
-    //         <MenuList>
-    //             <MenuItem>Huehuee</MenuItem>
-    //             <MenuItem>Haha</MenuItem>
-    //             <MenuItem>Ha</MenuItem>
-    //         </MenuList>
-    //       </Menu>
-    //         </HStack>
-    //     </FormControl>
-
-    //     <FormControl mb={{base: '8px',sm: '8px', lg: '20px'}} isRequired>
-    //         <HStack>
-    //       <FormLabel w='25%' fontSize={{base: '14px',sm: '14px',md: '16px', lg: '17px'}} color='gray.600'>Application/Workload Type</FormLabel>
-    //       <Menu>
-    //         <MenuButton w='70%' as={Button} variant="outline" colorScheme="gray" rightIcon={<ChevronDownIcon />}>
-    //         Select an option
-    //         </MenuButton>
-    //         <MenuList>
-    //             <MenuItem>Huehuee</MenuItem>
-    //             <MenuItem>Haha</MenuItem>
-    //             <MenuItem>Ha</MenuItem>
-    //         </MenuList>
-    //       </Menu>
-    //         </HStack>
-    //     </FormControl>
-
-    //     <FormControl mb={{base: '8px',sm: '8px', lg: '20px'}} isRequired>
-    //         <HStack>
-    //       <FormLabel w='25%' fontSize={{base: '14px',sm: '14px',md: '16px', lg: '17px'}} color='gray.600'>Current Tech Stacks</FormLabel>
-    //       <Menu>
-    //         <MenuButton w='70%' as={Button} variant="outline" colorScheme="gray" rightIcon={<ChevronDownIcon />}>
-    //         Select an option
-    //         </MenuButton>
-    //         <MenuList>
-    //             <MenuItem>Huehuee</MenuItem>
-    //             <MenuItem>Haha</MenuItem>
-    //             <MenuItem>Ha</MenuItem>
-    //         </MenuList>
-    //       </Menu>
-    //         </HStack>
-    //     </FormControl>
-
-    //   </Flex>
     <>
     <Text mb='15px' textAlign='center' p='5px' bg='#389785' color='white' borderRadius='5px' fontSize={{ base: '16px', sm: '18px',md: '25px', lg: '25px' }}>
         Begin Your Project Journey & Let's Start With Quick Due Diligence

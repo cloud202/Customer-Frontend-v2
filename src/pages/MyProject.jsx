@@ -3,14 +3,36 @@ import Sidebar from '../components/Sidebar'
 import { Box, Button, Card, CardBody, CardHeader, Flex, Grid, GridItem, Heading, Stack, StackDivider, Text } from '@chakra-ui/react'
 import { Navbar } from '../components/Navbar'
 import axios from 'axios'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+import { setPhasesData } from '../features/tabs/phases'
+import ProjectTab from '../components/ProjectTab'
+import { setProjectData, setProjectId } from '../features/formData/selectDueDiligence'
+import { resetFormData, setFormData } from '../features/formData/dueDiligenceForm'
+import ProjectTabs from '../components/ProjectTabs'
 
 const MyProject = () => {
     const [project,setProject] = useState();
     const customerId = useSelector((state)=> state.token.customerId)
     const [projectFound,setProjectFound] = useState(false);
+    const [currPage,setCurrPage] = useState(1);
+    const [loading,setLoading] = useState(true);
+    const formData = useSelector((state)=> state.dueDiligence.formData);
+    const dispatch = useDispatch();
 
+    const handleNext = async (project)=>{
+        dispatch(resetFormData());
+        try{
+        //   const {data} = await axios.post(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/add/${projectId}`,project);
+          const response =  await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/${project._id}/phases`);
+          dispatch(setPhasesData(response.data));
+          dispatch(setFormData({field: "name",value: project.project_name}));
+          
+        }catch(e){
+          console.log("Error setting up customer db",e);
+         }
+        setCurrPage(currPage+1);
+      }
 
     async function fetchData (){
         try{
@@ -19,7 +41,9 @@ const MyProject = () => {
             setProjectFound(true);
         }catch(e){
             console.log("No project found",e);
+
         }
+        setLoading(false);
         
     }
     useEffect(()=>{
@@ -37,6 +61,8 @@ const MyProject = () => {
       </GridItem>
 
       <GridItem colSpan={{base: '6', sm: '6', md: '6',lg: '5' }} m={{base: '12px',sm: '12px',md: "25px",lg: '25px'}} mt='15px'>
+        {currPage===1? <>
+        
     <Text mb='15px' textAlign='center' p='5px' bg='#389785' color='white' borderRadius='5px' fontSize={{ base: '16px', sm: '18px',md: '25px', lg: '25px' }}>
         List of My Projects
       </Text>
@@ -53,7 +79,7 @@ const MyProject = () => {
         </Flex>
         }   
         {project && project.map((project,ind)=>
-            <Card key={ind} flexGrow='1' flexBasis='300px' justifyContent='flex-start' mb='6px' bg='#40a798' _hover={{ transform: 'scale(1.03)', transition: 'transform 0.3s ease' }} >
+            <Card key={ind} flexGrow='1' flexBasis='300px' justifyContent='flex-start' mb='6px' bg='#40a798' _hover={{ transform: 'scale(1.03)', transition: 'transform 0.3s ease',cursor: 'pointer' }} onClick={()=>handleNext(project)}>
             <CardHeader>
                 <Heading size='md' color='gray.100'>{project.project_name.toUpperCase()}</Heading>
             </CardHeader>
@@ -90,8 +116,9 @@ const MyProject = () => {
             </CardBody>
             </Card>
         )}
-        
+
     </Flex>
+    </> : <ProjectTabs/>}
 
     </GridItem>
     </Grid>

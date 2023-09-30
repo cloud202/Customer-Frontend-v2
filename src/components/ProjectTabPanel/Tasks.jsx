@@ -21,6 +21,7 @@ import LoopIcon from '@mui/icons-material/Loop';
 
 const Tasks = () => {
     const projectData = useSelector((state) => state.selectDueDiligence.projectData);
+    console.log("Project data is ",projectData);
   
     const [searchQueries, setSearchQueries] = useState('');
     const [phaseFilter,setPhaseFilter] = useState('All Phases');

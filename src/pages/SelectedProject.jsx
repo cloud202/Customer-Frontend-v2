@@ -5,7 +5,6 @@ import Sidebar from '../components/Sidebar'
 import { ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons'
 import DueDiligence from '../components/DueDiligence'
 import SelectTemplate from '../components/SelectTemplate'
-import SelectedTemplatePage from '../components/SelectedTemplatePage'
 import SettingsSuggestIcon from '@mui/icons-material/SettingsSuggest';
 import ProjectTab from '../components/ProjectTab'
 import Roadmap from '../components/Roadmap'
@@ -13,7 +12,6 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { setPhasesData } from '../features/tabs/phases'
-import { resetFormData } from '../features/formData/dueDiligenceForm'
 
 const SelectedProject = () => {
   const [currPage,setCurrPage] = useState(1);
@@ -21,7 +19,7 @@ const SelectedProject = () => {
   const projectData = useSelector((state)=> state.selectDueDiligence.projectData);
   const projectId = useSelector((state)=> state.selectDueDiligence.projectId);
   const formData = useSelector((state)=> state.dueDiligence.formData);
-  const customerId = useSelector((state)=> state.token.customerId)
+  const customerId = useSelector((state)=> state.token.customerId);
 
   const dispatch = useDispatch();
 
@@ -33,7 +31,7 @@ const SelectedProject = () => {
       const {data} = await axios.post(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/add/${projectId}`,project);
       const response =  await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/${data._id}/phases`);
       dispatch(setPhasesData(response.data));
-      dispatch(resetFormData());
+      
     }catch(e){
       console.log("Error setting up customer db",e);
      }
