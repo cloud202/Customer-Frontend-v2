@@ -12,44 +12,35 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Table,
+  Tbody,
   Text,
+  Th,
+  Thead,
+  Tr,
 } from '@chakra-ui/react';
 import { ChevronDownIcon, SearchIcon } from '@chakra-ui/icons';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import LoopIcon from '@mui/icons-material/Loop';
+import TaskDetail from './TaskDetail';
+import { useNavigate } from 'react-router-dom';
 
-const Tasks = () => {
-    const projectData = useSelector((state) => state.selectDueDiligence.projectData);
+const Tasks = ({setSelectedTask,setTaskDetail}) => {
+    const navigate = useNavigate();
+    const projectData = useSelector((state) => state.phases.phases);
     console.log("Project data is ",projectData);
-  
-    const [searchQueries, setSearchQueries] = useState('');
-    const [phaseFilter,setPhaseFilter] = useState('All Phases');
-    const [moduleFilter,setModuleFilter] = useState('All Modules');
-  
-    const filteredTasks = (tasks, query) => {
-      return tasks.filter((task) =>
-        task.taskId.name.toLowerCase().includes(query.toLowerCase())
-      );
-    };
-  
-    const searchedTasks = filteredTasks(
-      projectData.phases.reduce((acc, phase) => {
-        return acc.concat(
-          phase.modules.reduce((moduleAcc, module) => {
-            return moduleAcc.concat(
-              module.tasks.map((task) => ({
-                ...task,
-                phase: phase.phasesId.name,
-                module: module.moduleId.name,
-              }))
-            );
-          }, [])
-        );
-      }, []),
-      searchQueries
-    );
-  
+    
+    const handleSelect = (phase,module,task)=>{
+      setTaskDetail({
+        phase,
+        module,
+        task
+      })
+      setSelectedTask(task);
+      
+    }
+
     return (
       <Box> 
         <Box mb="20px" display='flex' gap={2} flexWrap='wrap'>
@@ -59,54 +50,55 @@ const Tasks = () => {
             </InputLeftElement>
             <Input
               placeholder="Search Tasks"
-              value={searchQueries}
-              onChange={(e) => setSearchQueries(e.target.value)}
-            />
+               />
           </InputGroup>
 
           <Box display='flex' gap={2} mb='6px' flexWrap='wrap'>
           <Menu >
             <MenuButton as={Button} rightIcon={<FilterListIcon />}>
-                {phaseFilter}
+                All Phases
             </MenuButton>
             <MenuList>
-                <MenuItem onClick={()=> setPhaseFilter('All Phases')}>All Phases</MenuItem>
-                {projectData.phases.map((phase,ind)=> <MenuItem key={ind} onClick={()=> setPhaseFilter(phase.phasesId.name)}>{phase.phasesId.name}</MenuItem>)}
+                <MenuItem>All Phases</MenuItem>
             </MenuList>
             </Menu>
 
         <Menu>
             <MenuButton as={Button} rightIcon={<FilterListIcon />}>
-                {moduleFilter}
+                All Modules
             </MenuButton>
             <MenuList>
-            <MenuItem onClick={()=>setModuleFilter('All Modules')}>All Modules</MenuItem>
-            
-            {projectData.phases.map((phase)=>  
-                phase.modules.map((module,ind)=>
-                    <MenuItem key={ind} onClick={()=> setModuleFilter(module.moduleId.name)}>{module.moduleId.name}</MenuItem>))}
+            <MenuItem >All Modules</MenuItem>
             </MenuList>
             </Menu>
         </Box>
         </Box>
   
-          <table style={{ width: '100%' }}>
+          <table style={{ width: '100%',border: '1px solid gray',borderRadius: '5px' }}>
             <thead>
-              <tr>
-                <th>Onboarded</th>
-                <th>Completed</th>
-                <th>In-progress</th>
-                <th>Due</th>
+                <tr style={{border: '1px solid #d2d3d4',borderRadius: '5px',bg:'gray' }}>
+                <th style={{border: '1px solid #d2d3d4',backgroundColor: '#EDF2F7',fontWeight: '500'}}>Onboarded</th>
+                <th style={{border: '1px solid #d2d3d4',backgroundColor: '#EDF2F7',fontWeight: '500'}}>Completed</th>
+                <th style={{border: '1px solid #d2d3d4',backgroundColor: '#EDF2F7',fontWeight: '500'}}>In-progress</th>
+                <th style={{border: '1px solid #d2d3d4',backgroundColor: '#EDF2F7',fontWeight: '500'}}>Due</th>
               </tr>
             </thead>
             <tbody>
-              {searchedTasks.map((task, ind) => (
-                <tr key={ind}>
-                  <td>{task.taskId.name}</td>
-                </tr>
-              ))}
+            {
+            projectData.map((phaseUp)=>
+                {return phaseUp.map((phase)=>  
+                phase.modules.map((module,ind)=>
+                    {
+                        return module.tasks.map((task,ind)=> 
+                            <tr style={{border: '1px solid #d2d3d4',borderRadius: '5px' }}>
+                            <td style={{border: '1px solid #d2d3d4',borderRadius: '5px',color: '#3366CC',cursor: 'pointer' }} onClick={()=>handleSelect(phase,module,task)}>{task.taskId.name}</td>
+                            </tr>)
+                    }))})
+            }
+
             </tbody>
           </table>
+
         </Box>
     );
   };

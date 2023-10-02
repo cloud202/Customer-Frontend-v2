@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import Sidebar from '../components/Sidebar'
 import { Box, Button, Card, CardBody, CardHeader, Flex, Grid, GridItem, Heading, Stack, StackDivider, Text } from '@chakra-ui/react'
 import { Navbar } from '../components/Navbar'
@@ -9,7 +9,6 @@ import { setPhasesData } from '../features/tabs/phases'
 import ProjectTab from '../components/ProjectTab'
 import { setProjectData, setProjectId } from '../features/formData/selectDueDiligence'
 import { resetFormData, setFormData } from '../features/formData/dueDiligenceForm'
-import ProjectTabs from '../components/ProjectTabs'
 
 const MyProject = () => {
     const [project,setProject] = useState();
@@ -23,9 +22,12 @@ const MyProject = () => {
     const handleNext = async (project)=>{
         dispatch(resetFormData());
         try{
+            console.log("ProjectId",project._id);
         //   const {data} = await axios.post(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/add/${projectId}`,project);
           const response =  await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/${project._id}/phases`);
+        //   const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/api/admin/master/v2/project_template/${templateId}`);
           dispatch(setPhasesData(response.data));
+          dispatch(setProjectData(response.data));
           dispatch(setFormData({field: "name",value: project.project_name}));
           
         }catch(e){
@@ -34,21 +36,22 @@ const MyProject = () => {
         setCurrPage(currPage+1);
       }
 
-    async function fetchData (){
-        try{
-            const {data} = await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/allProjects`)
+      const fetchData = useCallback(async () => {
+        try {
+            const { data } = await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/allProjects`)
             setProject(data);
             setProjectFound(true);
-        }catch(e){
-            console.log("No project found",e);
-
+        } catch (e) {
+            console.log("No project found", e);
         }
         setLoading(false);
-        
-    }
-    useEffect(()=>{
-        fetchData();
-    },[])
+    }, [customerId]);
+    
+    useEffect(() => {
+        fetchData(); 
+    }, [fetchData]);
+    
+  
 
   return (
     <>
@@ -118,7 +121,7 @@ const MyProject = () => {
         )}
 
     </Flex>
-    </> : <ProjectTabs/>}
+    </> : <ProjectTab/>}
 
     </GridItem>
     </Grid>

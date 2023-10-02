@@ -1,12 +1,20 @@
 import { Box, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react'
-import React from 'react'
+import React, { useState } from 'react'
 import '../css/user/boxShadow.css'
 import Overview from './ProjectTabPanel/Overview'
 import Phases from './ProjectTabPanel/Phases'
 import Modules from './ProjectTabPanel/Modules'
-import Tasks from './ProjectTabPanel/Tasks'
+import Tasks from './ProjectTabPanel/Tasks.jsx'
+import TaskDetail from './ProjectTabPanel/TaskDetail'
 
 const ProjectTab = () => {
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [taskDetail,setTaskDetail] = useState({
+    phase: '',
+    module: '',
+    task: '',
+  })
+
   return (
     <Box className='box-shadow'>
       <Tabs variant='enclosed' size='lg'>
@@ -29,7 +37,11 @@ const ProjectTab = () => {
             <Modules/>
           </TabPanel>
           <TabPanel>
-            <Tasks/>
+          {selectedTask ? (
+            <TaskDetail task={selectedTask} setSelectedTask={setSelectedTask} taskDetail={taskDetail}/>
+          ) : (
+            <Tasks setSelectedTask={setSelectedTask} setTaskDetail={setTaskDetail}/>
+          )}
           </TabPanel>
           <TabPanel>
             <p>three!</p>

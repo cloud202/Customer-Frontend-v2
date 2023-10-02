@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setCustomerId } from './features/userData/token';
 import { useEffect } from 'react';
 import { resetProfileData, setProfileData } from './features/formData/profileForm';
+import Task from './pages/Task';
 
 function App() {
   
@@ -70,6 +71,7 @@ function App() {
             <Route path="/newproject" element={<NewProject/>}  />
             <Route path="/myproject" element={<MyProject/>}  />
             <Route path="/selectedproject" element={<SelectedProject/>}  />
+            <Route path="/task" element={<Task/>}  />
             </Route> 
        </Routes>
      </BrowserRouter> 

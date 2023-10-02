@@ -61,7 +61,7 @@ const Roadmap = () => {
                     </tr>
                     <tr>
                         {table.phases && table.phases.map((phase, index) => (
-                            <td key={index} colSpan={getTotalTasksInPhase(phase)} className={index % 2 === 0 ? 'alternating-row' : 'alternating-row-two'} style={{textAlign: 'center'}} >
+                            <td key={index} colSpan={getTotalTasksInPhase(phase)} className={index % 2 === 0 ? 'alternating-row' : 'alternating-row-two'} style={{textAlign: 'center',fontSize: '25px'}} >
                                 {phase.phasesId.name}
                             </td>
                         ))}
@@ -74,7 +74,7 @@ const Roadmap = () => {
                         {
                             flag=flag+1;
                             return (phase.modules.map((module, index) => (
-                                <td key={index} colSpan={module.tasks.length} className={flag % 2 === 0 ? 'alternating-row' : 'alternating-row-two'} style={{textAlign: 'center'}}>
+                                <td key={index} colSpan={module.tasks.length} className={flag % 2 === 0 ? 'alternating-row' : 'alternating-row-two'} style={{textAlign: 'center',fontSize: '18px'}}>
                                     {module.moduleId.name}
                                 </td>
                             )))
