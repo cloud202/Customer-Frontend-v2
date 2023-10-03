@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import Sidebar from '../components/Sidebar'
-import { Box, Button, Card, CardBody, CardHeader, Flex, Grid, GridItem, Heading, Stack, StackDivider, Text } from '@chakra-ui/react'
+import { Box, Button, Card, CardBody, CardHeader, Flex, Grid, GridItem, Heading, Spinner, Stack, StackDivider, Text } from '@chakra-ui/react'
 import { Navbar } from '../components/Navbar'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
@@ -9,6 +9,7 @@ import { setPhasesData } from '../features/tabs/phases'
 import ProjectTab from '../components/ProjectTab'
 import { setProjectData, setProjectId } from '../features/formData/selectDueDiligence'
 import { resetFormData, setFormData } from '../features/formData/dueDiligenceForm'
+import { resetResponseData, setResponseData } from '../features/tabs/dueDiligenceResponse'
 
 const MyProject = () => {
     const [project,setProject] = useState();
@@ -23,12 +24,20 @@ const MyProject = () => {
         dispatch(resetFormData());
         try{
             console.log("ProjectId",project._id);
-        //   const {data} = await axios.post(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/add/${projectId}`,project);
           const response =  await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/${project._id}/phases`);
-        //   const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/api/admin/master/v2/project_template/${templateId}`);
           dispatch(setPhasesData(response.data));
           dispatch(setProjectData(response.data));
-          dispatch(setFormData({field: "name",value: project.project_name}));
+
+          dispatch(resetResponseData());
+          const {data} =  await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/project/${project._id}`);
+          const projectResponse = {
+            "project_name": data.project_name,
+            "project_industry": data.project_industry.name,
+            "project_CAP": data.project_CAP,
+            "project_TS": data.project_TS,
+            "project_WT": data.project_WT
+          }
+          dispatch(setResponseData(projectResponse));
           
         }catch(e){
           console.log("Error setting up customer db",e);
@@ -41,6 +50,8 @@ const MyProject = () => {
             const { data } = await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/allProjects`)
             setProject(data);
             setProjectFound(true);
+
+           
         } catch (e) {
             console.log("No project found", e);
         }
@@ -70,7 +81,18 @@ const MyProject = () => {
         List of My Projects
       </Text>
 
-    <Flex p='10px' className='box-shadow' gap={3} flexWrap='wrap' justifyContent='flex-start'>
+    {loading ? (
+          <Flex w='100%' justifyContent='center' >
+                <Spinner
+                  thickness='4px'
+                  speed='0.65s'
+                  emptyColor='gray.200'
+                  color='blue.500'
+                  size='xl'
+                  />
+                  </Flex>)
+                 
+                :  (<Flex p='10px' className='box-shadow' gap={3} flexWrap='wrap' justifyContent='flex-start'>
         {!projectFound && 
         <Flex flexDir='column' w='100%' h='150px' alignItems='center' justifyContent='center' gap={4}>
         <Text fontSize='xl'>
@@ -120,7 +142,7 @@ const MyProject = () => {
             </Card>
         )}
 
-    </Flex>
+    </Flex>)}
     </> : <ProjectTab/>}
 
     </GridItem>

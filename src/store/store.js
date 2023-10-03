@@ -7,13 +7,15 @@ import selectDueDiligenceReducer from '../features/formData/selectDueDiligence'
 import profileForm from '../features/formData/profileForm'
 import phasesReducer from '../features/tabs/phases'
 import tokenReducer from '../features/userData/token'
+import dueDiligenceResponseReducer from "../features/tabs/dueDiligenceResponse";
 
 const rootReducers = combineReducers({
     dueDiligence: dueDiligenceReducer,
     selectDueDiligence: selectDueDiligenceReducer,
     profileForm: profileForm,
     phases: phasesReducer,
-    token: tokenReducer
+    token: tokenReducer,
+    dueDiligenceResponse: dueDiligenceResponseReducer
 })
 
 const persistConfig = {

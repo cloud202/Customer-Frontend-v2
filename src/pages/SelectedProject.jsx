@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { setPhasesData } from '../features/tabs/phases'
+import { setResponseData } from '../features/tabs/dueDiligenceResponse'
 
 const SelectedProject = () => {
   const [currPage,setCurrPage] = useState(1);
@@ -19,6 +20,7 @@ const SelectedProject = () => {
   const projectData = useSelector((state)=> state.selectDueDiligence.projectData);
   const projectId = useSelector((state)=> state.selectDueDiligence.projectId);
   const formData = useSelector((state)=> state.dueDiligence.formData);
+  const postData = useSelector((state)=> state.dueDiligence.postData);
   const customerId = useSelector((state)=> state.token.customerId);
 
   const dispatch = useDispatch();
@@ -26,11 +28,27 @@ const SelectedProject = () => {
   const handleNext = async ()=>{
     try{
       const project = {
-        project_name: formData.name
+          "project_name": formData.name,
+          "project_industry_id": postData.industry_id,
+          "project_CAP": formData.cloudApproach,
+          "project_TS": formData.techStack,
+          "project_WT": formData.workloadType
       }
       const {data} = await axios.post(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/add/${projectId}`,project);
-      const response =  await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/${data._id}/phases`);
-      dispatch(setPhasesData(response.data));
+      // const {data} = await axios.post(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/add/${projectId}`,project);
+      // const response =  await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/${data._id}/phases`);
+
+      const projectResponse = {
+        "project_name": data.project_name,
+        "project_industry": data.project_industry.name,
+        "project_CAP": data.project_CAP,
+        "project_TS": data.project_TS,
+        "project_WT": data.project_WT
+    }
+
+      dispatch(setResponseData(projectResponse));
+      dispatch(setPhasesData(data.phases));
+      console.log("New data",projectResponse);
       
     }catch(e){
       console.log("Error setting up customer db",e);
