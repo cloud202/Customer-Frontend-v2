@@ -7,13 +7,16 @@ import LoopIcon from '@mui/icons-material/Loop';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 const TaskDetail = ({selectedTask,setSelectedTask,taskDetail}) => {
     const { isOpen, onOpen, onClose } = useDisclosure()
   const btnRef = React.useRef()
+  const userInfo = useSelector((state)=> state.token.userInfo);
 
   const [taskType,setTaskType] = useState(`${taskDetail.task.taskId.task_type}`);
   const [solution,setSolution] = useState(null);
+  const [status,setStatus] = useState('Onboarded');
 
   const fetchSolDataEffect = useCallback(async () => {
     try {
@@ -27,6 +30,35 @@ const TaskDetail = ({selectedTask,setSelectedTask,taskDetail}) => {
   useEffect(()=>{
     fetchSolDataEffect();
   },[])
+
+  const [startDate, setStartDate] = useState('');
+  const [dueDate, setDueDate] = useState('');
+  const [effortEstimated, setEffortEstimated] = useState('');
+
+  useEffect(() => {
+    calculateEffortEstimated();
+  }, [startDate, dueDate]);
+
+  const handleStartDateChange = (event) => {
+    setStartDate(event.target.value);
+  };
+
+  const handleDueDateChange = (event) => {
+    setDueDate(event.target.value);
+  };
+
+  const calculateEffortEstimated = () => {
+    if (startDate && dueDate) {
+      const startDateTime = new Date(startDate).getTime();
+      const dueDateTime = new Date(dueDate).getTime();
+      const differenceInMilliseconds = dueDateTime - startDateTime;
+      const differenceInDays = differenceInMilliseconds / (1000 * 3600 * 24);
+
+      setEffortEstimated(differenceInDays);
+    } else {
+      setEffortEstimated('');
+    }
+  };
 
   return (
     <div>
@@ -181,37 +213,50 @@ const TaskDetail = ({selectedTask,setSelectedTask,taskDetail}) => {
           <DrawerBody>
             <FormControl mb={{base: '8px',sm: '8px', lg: '10px'}} isRequired>
                 <FormLabel fontSize={{base: '14px',sm: '14px',md: '16px', lg: '17px'}} color='gray.700'>Status</FormLabel>
-                <Input w='100%' type="text" placeholder="Enter template name" name='name' />
+                <Menu>
+                    <MenuButton w='100%' as={Flex} variant="outline" colorScheme="gray" color='gray.700' rightIcon={<ChevronDownIcon />} className='menu-button'>
+                    <HStack display='flex' justifyContent='space-between'>
+                    <Text>{status}</Text>
+                    <ChevronDownIcon />
+                    </HStack>
+                    </MenuButton>
+                    <MenuList>
+                        <MenuItem onClick={()=> setStatus('Onboarded')}>Onboarded</MenuItem>
+                        <MenuItem onClick={()=> setStatus('Completed')}>Completed</MenuItem>
+                        <MenuItem onClick={()=> setStatus('In-progress')}>In-progress</MenuItem>
+                        <MenuItem onClick={()=> setStatus('Due')}>Due</MenuItem>
+                    </MenuList>
+                </Menu>
             </FormControl>
 
             <FormControl mb={{base: '8px',sm: '8px', lg: '10px'}} isRequired>
                 <FormLabel fontSize={{base: '14px',sm: '14px',md: '16px', lg: '17px'}} color='gray.700'>Phase</FormLabel>
-                <Input w='100%' type="text" placeholder="Enter template name" name='name' value={taskDetail.phase.phasesId.name} />
+                <Input w='100%' isDisabled={true} type="text" placeholder="Enter template name" name='name' value={taskDetail.phase.phasesId.name} />
             </FormControl>
 
             <FormControl mb={{base: '8px',sm: '8px', lg: '10px'}} isRequired>
                 <FormLabel fontSize={{base: '14px',sm: '14px',md: '16px', lg: '17px'}} color='gray.700'>Module</FormLabel>
-                <Input w='100%' type="text" placeholder="Enter template name" name='name' value={taskDetail.module.moduleId.name} />
+                <Input w='100%' type="text" isDisabled={true} placeholder="Enter template name" name='name' value={taskDetail.module.moduleId.name} />
             </FormControl>
 
-            <FormControl mb={{base: '8px',sm: '8px', lg: '10px'}} isRequired>
-                <FormLabel fontSize={{base: '14px',sm: '14px',md: '16px', lg: '17px'}} color='gray.700'>Start Date</FormLabel>
-                <Input w='100%' type="date" placeholder="Enter template name" name='name' />
-            </FormControl>
+            <FormControl mb={{ base: '8px', sm: '8px', lg: '10px' }} isRequired>
+            <FormLabel fontSize={{ base: '14px', sm: '14px', md: '16px', lg: '17px' }} color='gray.700'>Start Date</FormLabel>
+            <Input w='100%' type="date" placeholder="Enter template name" name='name' onChange={handleStartDateChange} />
+          </FormControl>
 
-            <FormControl mb={{base: '8px',sm: '8px', lg: '10px'}} isRequired>
-                <FormLabel fontSize={{base: '14px',sm: '14px',md: '16px', lg: '17px'}} color='gray.700'>Due On</FormLabel>
-                <Input w='100%' type="date" placeholder="Enter template name" name='name' />
-            </FormControl>
+          <FormControl mb={{ base: '8px', sm: '8px', lg: '10px' }} isRequired>
+            <FormLabel fontSize={{ base: '14px', sm: '14px', md: '16px', lg: '17px' }} color='gray.700'>Due On</FormLabel>
+            <Input w='100%' type="date" placeholder="Enter template name" name='name' onChange={handleDueDateChange} />
+          </FormControl>
 
-            <FormControl mb={{base: '8px',sm: '8px', lg: '10px'}} isRequired>
-                <FormLabel fontSize={{base: '14px',sm: '14px',md: '16px', lg: '17px'}} color='gray.700'>Effort Estimated</FormLabel>
-                <Input w='100%' type="text" placeholder="Enter template name" name='name' />
-            </FormControl>
+          <FormControl mb={{ base: '8px', sm: '8px', lg: '10px' }} isRequired>
+            <FormLabel fontSize={{ base: '14px', sm: '14px', md: '16px', lg: '17px' }} color='gray.700'>Effort Estimated</FormLabel>
+            <Input isDisabled={true} w='100%' type="text" placeholder="Effort Estimated" value={effortEstimated+ " Days"}  />
+          </FormControl>
 
             <FormControl mb={{base: '8px',sm: '8px', lg: '10px'}} isRequired>
                 <FormLabel fontSize={{base: '14px',sm: '14px',md: '16px', lg: '17px'}} color='gray.700'>Assign To</FormLabel>
-                <Input w='100%' type="text" placeholder="Enter template name" name='name' />
+                <Input isDisabled={true} w='100%' type="text" placeholder="Enter template name" name='name' value={userInfo.userName}/>
             </FormControl>
 
             <FormControl mb={{base: '8px',sm: '8px', lg: '10px'}} isRequired>
@@ -256,6 +301,11 @@ const TaskDetail = ({selectedTask,setSelectedTask,taskDetail}) => {
                     <Textarea w='100%' type="text" placeholder="Enter the script" name='name'></Textarea>
                     </FormControl>)
                 }
+
+                <FormControl mb={{base: '8px',sm: '8px', lg: '10px'}} isRequired>
+                    <FormLabel fontSize={{base: '14px',sm: '14px',md: '16px', lg: '17px'}} color='gray.700' >Description</FormLabel>
+                    <Textarea w='100%' type="text" placeholder="Enter the description" name='name'></Textarea>
+                    </FormControl>
           </DrawerBody>
 
           <DrawerFooter>

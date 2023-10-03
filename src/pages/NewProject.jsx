@@ -16,7 +16,6 @@ const NewProject = () => {
   const formData = useSelector((state)=> state.dueDiligence.formData);
 
   const handleNext =()=>{
-
     if(!formData.name || formData.workloadInScope==='Select an option' || 
         formData.cloudApproach==='Select an option' || formData.industry==='Select an option' || (formData.workloadType.length<1) || (formData.techStack.length<1)){
       toast({
