@@ -48,7 +48,6 @@ const Tasks = ({flag,setSelectedTask,setTaskDetail}) => {
 
     async function fetchData(){
       try{
-        console.log(`/api/customer/${customerId}/project/${projectId}/phases`);
         const {data} = await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/${projectId}/phases`);
         setProjectData(data);
       }catch(e){

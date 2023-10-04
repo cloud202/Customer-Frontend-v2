@@ -13,6 +13,14 @@ const Overview = () => {
 const { isOpen, onOpen, onClose } = useDisclosure()
   const btnRef = React.useRef()
   const [adoption,setAdoption] = useState([]);
+  const [completedTaskCount,setCompletedTaskCount] = useState(0);
+  const [totalTaskCount,setTotalTaskCount] = useState(0);
+  const customerId = useSelector((state)=> state.token.customerId)
+  const projectId = useSelector((state)=> state.selectDueDiligence.projectId);
+
+//   let completedTaskCount=0;
+//   let totalTaskCount = 0;
+  
 
   async function fetchData(){
     try{
@@ -24,12 +32,45 @@ const { isOpen, onOpen, onClose } = useDisclosure()
     }
 }
 
+async function fetchPhases(){
+    try{
+      const {data} = await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/${projectId}/phases`);
+      let newCompletedTaskCount = 0;
+        let newTotalTaskCount = 0;
+
+
+      data.forEach(phase => {
+        const modules = phase.modules || [];
+        modules.forEach(module => {
+            const tasks = module.tasks || [];
+            tasks.forEach(task => {
+                newTotalTaskCount++;
+                const taskStatus = task.taskId && task.taskId.task_status;
+                if (taskStatus==="Completed") {
+                  newCompletedTaskCount++;
+                }
+            });
+        });
+
+    });
+    setCompletedTaskCount(newCompletedTaskCount);
+    setTotalTaskCount(newTotalTaskCount);
+    }catch(e){
+      console.log("Error fetching task",e);
+    }
+  }
+
     useEffect(()=>{
         fetchData();
     },[])
 
+    useEffect(()=>{
+        fetchPhases();
+    },[fetchPhases])
+
     const userInfo = useSelector((state)=> state.token.userInfo);
     const formData = useSelector((state)=> state.dueDiligenceResponse.dueDiligence);
+
   return (
     <Flex flexDir='column'>
         <Card>
@@ -56,11 +97,18 @@ const { isOpen, onOpen, onClose } = useDisclosure()
                 </Box>
                 <Box>
                     <Heading size='xs' textTransform='uppercase'>
-                    Project Status
+                    Project Status ({Math.floor(completedTaskCount / totalTaskCount * 100)}%)
                     </Heading>
                     <Box pt='2'>
-                    <Progress hasStripe value={64} colorScheme='green'/>
+                    <Progress hasStripe value={completedTaskCount/totalTaskCount*100} colorScheme={
+                        completedTaskCount / totalTaskCount * 100 < 30
+                        ? 'red'
+                        : completedTaskCount / totalTaskCount * 100 < 60
+                        ? 'orange'
+                        : 'green'
+                    }/>
                     </Box>
+
                 </Box>
                 <Box>
                     <Heading size='xs' textTransform='uppercase'>
