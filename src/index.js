@@ -74,13 +74,11 @@ const MyComponent = () => {
   }, [idTokenRedux]);
 
   return (
-    <React.StrictMode>
       <Provider store={store}>
         <ChakraProvider>
           <App />
         </ChakraProvider>
       </Provider>
-    </React.StrictMode>
   );
 };
 

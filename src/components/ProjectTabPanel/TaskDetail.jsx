@@ -40,7 +40,7 @@ const TaskDetail = ({setFlag,selectedTask,setSelectedTask,taskDetail}) => {
   const [startDate, setStartDate] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [effortEstimated, setEffortEstimated] = useState('');
-  const [taskDescription,setTaskDescription] = useState('');
+  const [taskDescription,setTaskDescription] = useState(taskDetail.task.taskId.task_description || '');
 
   useEffect(() => {
     calculateEffortEstimated();
@@ -163,7 +163,7 @@ const TaskDetail = ({setFlag,selectedTask,setSelectedTask,taskDetail}) => {
                 Start Date
                 </Heading>
                 <Text pt='2' fontSize={{ base: '12px', sm: '16px',md: '20px', lg: '20px' }}>
-                  {formatDate(taskDetail.task.taskId.start_date) || helper}</Text>
+                  {taskDetail.task.taskId.start_date?formatDate(taskDetail.task.taskId.start_date) : helper}</Text>
 
             </Box>
             <Box>
@@ -171,7 +171,7 @@ const TaskDetail = ({setFlag,selectedTask,setSelectedTask,taskDetail}) => {
                 Due On
                 </Heading>
                 <Text pt='2' fontSize={{ base: '12px', sm: '16px',md: '20px', lg: '20px' }}>
-                {formatDate(taskDetail.task.taskId.due_on) || helper}
+                {taskDetail.task.taskId.due_on? formatDate(taskDetail.task.taskId.due_on): helper}
                 </Text>
             </Box>
             <Box>
@@ -203,7 +203,7 @@ const TaskDetail = ({setFlag,selectedTask,setSelectedTask,taskDetail}) => {
                 Effort Estimated
                 </Heading>
                 <Text pt='2' fontSize={{ base: '12px', sm: '16px',md: '20px', lg: '20px' }}>
-                {taskDetail.task.taskId.effort_estimate+ " days" || helper}
+                {taskDetail.task.taskId.effort_estimate? (taskDetail.task.taskId.effort_estimate+" days") : helper}
                 </Text>
             </Box>
             <Box>
@@ -367,7 +367,7 @@ const TaskDetail = ({setFlag,selectedTask,setSelectedTask,taskDetail}) => {
 
                 <FormControl mb={{base: '8px',sm: '8px', lg: '10px'}} isRequired>
                     <FormLabel fontSize={{base: '14px',sm: '14px',md: '16px', lg: '17px'}} color='gray.700' >Description</FormLabel>
-                    <Textarea w='100%' type="text" placeholder="Enter the description" name='name' onChange={(e)=> setTaskDescription(e.target.value)}></Textarea>
+                    <Textarea w='100%' type="text" placeholder="Enter the description" name='name' value={taskDescription} onChange={(e)=> setTaskDescription(e.target.value)}></Textarea>
                     </FormControl>
           </DrawerBody>
 
