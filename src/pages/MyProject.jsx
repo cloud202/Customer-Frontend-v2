@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { setPhasesData } from '../features/tabs/phases'
 import ProjectTab from '../components/ProjectTab'
-import { setProjectData, setProjectId } from '../features/formData/selectDueDiligence'
+import { resetProjectId, setProjectData, setProjectId } from '../features/formData/selectDueDiligence'
 import { resetFormData, setFormData } from '../features/formData/dueDiligenceForm'
 import { resetResponseData, setResponseData } from '../features/tabs/dueDiligenceResponse'
 
@@ -23,12 +23,12 @@ const MyProject = () => {
     const handleNext = async (project)=>{
         dispatch(resetFormData());
         try{
-            console.log("ProjectId",project._id);
           const response =  await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/${project._id}/phases`);
           dispatch(setPhasesData(response.data));
           dispatch(setProjectData(response.data));
 
           dispatch(resetResponseData());
+          dispatch(resetProjectId());
           const {data} =  await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/project/${project._id}`);
           const projectResponse = {
             "project_name": data.project_name,
@@ -38,6 +38,7 @@ const MyProject = () => {
             "project_WT": data.project_WT
           }
           dispatch(setResponseData(projectResponse));
+          dispatch(setProjectId(project._id));
           
         }catch(e){
           console.log("Error setting up customer db",e);

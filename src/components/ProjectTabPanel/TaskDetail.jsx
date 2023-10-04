@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardBody, CardHeader, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerFooter, DrawerHeader, DrawerOverlay, Flex, FormControl, FormLabel, HStack, Heading, Input, Menu, MenuButton, MenuItem, MenuList, Stack, StackDivider, Text, Textarea, useDisclosure } from '@chakra-ui/react';
+import { Box, Button, Card, CardBody, CardHeader, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerFooter, DrawerHeader, DrawerOverlay, Flex, FormControl, FormLabel, HStack, Heading, Input, Menu, MenuButton, MenuItem, MenuList, Stack, StackDivider, Text, Textarea, useDisclosure, useToast } from '@chakra-ui/react';
 import { ArrowBack } from '@mui/icons-material';
 import React, { useCallback, useEffect, useState } from 'react';
 import SettingsSuggestIcon from '@mui/icons-material/SettingsSuggest';
@@ -9,14 +9,20 @@ import { ChevronDownIcon } from '@chakra-ui/icons';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 
-const TaskDetail = ({selectedTask,setSelectedTask,taskDetail}) => {
+const TaskDetail = ({setFlag,selectedTask,setSelectedTask,taskDetail}) => {
     const { isOpen, onOpen, onClose } = useDisclosure()
-  const btnRef = React.useRef()
+  const btnRef = React.useRef();
+  const helper = "Not Available"
+  const toast = useToast();
   const userInfo = useSelector((state)=> state.token.userInfo);
+  const customerId = useSelector((state)=> state.token.customerId)
+  const projectId = useSelector((state)=> state.selectDueDiligence.projectId);
+
 
   const [taskType,setTaskType] = useState(`${taskDetail.task.taskId.task_type}`);
   const [solution,setSolution] = useState(null);
   const [status,setStatus] = useState('Onboarded');
+  const [taskName,setTaskName] = useState(taskDetail.task.taskId.name);
 
   const fetchSolDataEffect = useCallback(async () => {
     try {
@@ -34,6 +40,7 @@ const TaskDetail = ({selectedTask,setSelectedTask,taskDetail}) => {
   const [startDate, setStartDate] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [effortEstimated, setEffortEstimated] = useState('');
+  const [taskDescription,setTaskDescription] = useState('');
 
   useEffect(() => {
     calculateEffortEstimated();
@@ -60,6 +67,56 @@ const TaskDetail = ({selectedTask,setSelectedTask,taskDetail}) => {
     }
   };
 
+  const handleSubmit = async ()=>{
+    if(!taskDetail.task.taskId.name || !startDate || !dueDate || !taskDescription){
+      toast({
+        title: ' Incomplete Form.',
+        description: 'Fill all the required fields',
+        status: 'error',
+        duration: 4000,
+        isClosable: true,
+      })
+      return;
+    }
+    try{
+      const updatedTask = {
+        customerId: customerId,
+        projectOid: projectId,
+        phaseOid: taskDetail.phase._id,
+        moduleOid: taskDetail.module._id,
+        taskOid: taskDetail.task._id,
+        updateFields: {
+          name: taskName,
+          startDate: startDate,
+          dueOn: dueDate,
+          effortEstimate: effortEstimated,
+          taskStatus: status,
+          taskDescription: taskDescription,
+          assignTo: userInfo.userName
+        }
+      }
+
+      const {data} = await axios.patch(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/project/task`,updatedTask);
+      toast({
+        title: 'Task Updated Successfully.',
+        status: 'success',
+        duration: 4000,
+        isClosable: true,
+      })
+      setFlag(true);
+      setSelectedTask(null);
+      setTimeout(()=>{onClose()},1000);
+
+    }catch(e){
+      console.log("Error updating Task",e);
+    }
+  }
+
+  const formatDate = (dateStr) => {
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    return new Date(dateStr).toLocaleDateString(undefined, options);
+  };
+
   return (
     <div>
       <Text mb='15px' textAlign='start' p='5px' pl='10px' bg='#389785' color='white' borderRadius='5px' fontSize={{ base: '16px', sm: '18px',md: '25px', lg: '25px' }}>
@@ -75,7 +132,7 @@ const TaskDetail = ({selectedTask,setSelectedTask,taskDetail}) => {
                 <Heading size='xs' textTransform='uppercase' color='#404040'>
                 Status
                 </Heading>
-                <Text pt='2' fontSize={{ base: '12px', sm: '16px',md: '20px', lg: '20px' }}>Unkown</Text>
+                <Text pt='2' fontSize={{ base: '12px', sm: '16px',md: '20px', lg: '20px' }}>{taskDetail.task.taskId.task_status || helper}</Text>
 
             </Box>
             <Box>
@@ -105,7 +162,8 @@ const TaskDetail = ({selectedTask,setSelectedTask,taskDetail}) => {
                 <Heading size='xs' textTransform='uppercase' color='#404040'>
                 Start Date
                 </Heading>
-                <Text pt='2' fontSize={{ base: '12px', sm: '16px',md: '20px', lg: '20px' }}>1 Oct,2023</Text>
+                <Text pt='2' fontSize={{ base: '12px', sm: '16px',md: '20px', lg: '20px' }}>
+                  {formatDate(taskDetail.task.taskId.start_date) || helper}</Text>
 
             </Box>
             <Box>
@@ -113,7 +171,7 @@ const TaskDetail = ({selectedTask,setSelectedTask,taskDetail}) => {
                 Due On
                 </Heading>
                 <Text pt='2' fontSize={{ base: '12px', sm: '16px',md: '20px', lg: '20px' }}>
-                9 Oct,2023
+                {formatDate(taskDetail.task.taskId.due_on) || helper}
                 </Text>
             </Box>
             <Box>
@@ -137,7 +195,7 @@ const TaskDetail = ({selectedTask,setSelectedTask,taskDetail}) => {
                 <Heading size='xs' textTransform='uppercase' color='#404040'>
                 Assign To
                 </Heading>
-                <Text pt='2' fontSize={{ base: '12px', sm: '16px',md: '20px', lg: '20px' }}>Unkown</Text>
+                <Text pt='2' fontSize={{ base: '12px', sm: '16px',md: '20px', lg: '20px' }}>{userInfo.userName}</Text>
 
             </Box>
             <Box>
@@ -145,7 +203,7 @@ const TaskDetail = ({selectedTask,setSelectedTask,taskDetail}) => {
                 Effort Estimated
                 </Heading>
                 <Text pt='2' fontSize={{ base: '12px', sm: '16px',md: '20px', lg: '20px' }}>
-                {taskDetail.phase.phasesId.name}
+                {taskDetail.task.taskId.effort_estimate+ " days" || helper}
                 </Text>
             </Box>
             <Box>
@@ -170,7 +228,7 @@ const TaskDetail = ({selectedTask,setSelectedTask,taskDetail}) => {
                 Task Description
                 </Heading>
                 <Text pt='2' fontSize={{ base: '12px', sm: '16px',md: '20px', lg: '20px' }}>
-                    {taskDetail.module.moduleId.description}
+                    {taskDetail.task.taskId.task_description || helper}
                 </Text>
 
             </Box>
@@ -230,8 +288,13 @@ const TaskDetail = ({selectedTask,setSelectedTask,taskDetail}) => {
             </FormControl>
 
             <FormControl mb={{base: '8px',sm: '8px', lg: '10px'}} isRequired>
+                <FormLabel fontSize={{base: '14px',sm: '14px',md: '16px', lg: '17px'}} color='gray.700'>Name</FormLabel>
+                <Input w='100%' type="text" placeholder="Enter task name" name='name' value={taskName} onChange={(e)=> setTaskName(e.target.value)}/>
+            </FormControl>
+            
+            <FormControl mb={{base: '8px',sm: '8px', lg: '10px'}} isRequired>
                 <FormLabel fontSize={{base: '14px',sm: '14px',md: '16px', lg: '17px'}} color='gray.700'>Phase</FormLabel>
-                <Input w='100%' isDisabled={true} type="text" placeholder="Enter template name" name='name' value={taskDetail.phase.phasesId.name} />
+                <Input w='100%' isDisabled={true} type="text" placeholder="Enter template name" name='name' value={taskDetail.phase.phasesId.name}/>
             </FormControl>
 
             <FormControl mb={{base: '8px',sm: '8px', lg: '10px'}} isRequired>
@@ -259,7 +322,7 @@ const TaskDetail = ({selectedTask,setSelectedTask,taskDetail}) => {
                 <Input isDisabled={true} w='100%' type="text" placeholder="Enter template name" name='name' value={userInfo.userName}/>
             </FormControl>
 
-            <FormControl mb={{base: '8px',sm: '8px', lg: '10px'}} isRequired>
+            {/* <FormControl mb={{base: '8px',sm: '8px', lg: '10px'}} isRequired>
                 <FormLabel fontSize={{base: '14px',sm: '14px',md: '16px', lg: '17px'}} color='gray.700'>Task Type</FormLabel>
                 <Menu>
                     <MenuButton w='100%' as={Flex} variant="outline" colorScheme="gray" color='gray.700' rightIcon={<ChevronDownIcon />} className='menu-button'>
@@ -300,11 +363,11 @@ const TaskDetail = ({selectedTask,setSelectedTask,taskDetail}) => {
                     <FormLabel fontSize={{base: '14px',sm: '14px',md: '16px', lg: '17px'}} color='gray.700' mt='3px'>Script</FormLabel>
                     <Textarea w='100%' type="text" placeholder="Enter the script" name='name'></Textarea>
                     </FormControl>)
-                }
+                } */}
 
                 <FormControl mb={{base: '8px',sm: '8px', lg: '10px'}} isRequired>
                     <FormLabel fontSize={{base: '14px',sm: '14px',md: '16px', lg: '17px'}} color='gray.700' >Description</FormLabel>
-                    <Textarea w='100%' type="text" placeholder="Enter the description" name='name'></Textarea>
+                    <Textarea w='100%' type="text" placeholder="Enter the description" name='name' onChange={(e)=> setTaskDescription(e.target.value)}></Textarea>
                     </FormControl>
           </DrawerBody>
 
@@ -312,7 +375,7 @@ const TaskDetail = ({selectedTask,setSelectedTask,taskDetail}) => {
             <Button variant='outline' mr={3} onClick={onClose}>
               Cancel
             </Button>
-            <Button colorScheme='blue'>Save</Button>
+            <Button colorScheme='blue' onClick={handleSubmit}>Save</Button>
           </DrawerFooter>
         </DrawerContent>
       </Drawer>

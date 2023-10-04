@@ -8,6 +8,7 @@ import UpdatePhase from './UpdatePhase';
 const Phases = () => {
     const phases = useSelector((state)=> state.phases.phases);
     const { isOpen, onOpen, onClose } = useDisclosure()
+    
   return (
     <Flex flexDir='column' gap={2}>
         {phases.map((phaseIn,ind)=> 

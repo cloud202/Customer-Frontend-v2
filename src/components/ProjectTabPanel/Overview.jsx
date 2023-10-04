@@ -10,7 +10,7 @@ import axios from 'axios'
 import { useEffect } from 'react';
 
 const Overview = () => {
-    const { isOpen, onOpen, onClose } = useDisclosure()
+const { isOpen, onOpen, onClose } = useDisclosure()
   const btnRef = React.useRef()
   const [adoption,setAdoption] = useState([]);
 
@@ -28,7 +28,7 @@ const Overview = () => {
         fetchData();
     },[])
 
-  const userInfo = useSelector((state)=> state.token.userInfo);
+    const userInfo = useSelector((state)=> state.token.userInfo);
     const formData = useSelector((state)=> state.dueDiligenceResponse.dueDiligence);
   return (
     <Flex flexDir='column'>

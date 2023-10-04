@@ -13,6 +13,7 @@ import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { setPhasesData } from '../features/tabs/phases'
 import { setResponseData } from '../features/tabs/dueDiligenceResponse'
+import { resetProjectId, setProjectId } from '../features/formData/selectDueDiligence'
 
 const SelectedProject = () => {
   const [currPage,setCurrPage] = useState(1);
@@ -48,6 +49,8 @@ const SelectedProject = () => {
 
       dispatch(setResponseData(projectResponse));
       dispatch(setPhasesData(data.phases));
+      dispatch(resetProjectId());
+      dispatch(setProjectId(data._id));
       console.log("New data",projectResponse);
       
     }catch(e){

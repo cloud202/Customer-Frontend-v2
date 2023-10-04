@@ -48,15 +48,6 @@ function App() {
   }
   
   useEffect(() => {
-  // const delay = 2000; 
-
-  // const timer = setTimeout(() => {
-  //   fetchData();
-  // }, delay);
-
-  // return () => {
-  //   clearTimeout(timer);
-  // };
   fetchData();
 }, [userInfo.email]);
 
