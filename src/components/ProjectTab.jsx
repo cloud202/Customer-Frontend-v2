@@ -15,6 +15,8 @@ const ProjectTab = () => {
     task: '',
   })
 
+  const [flag,setFlag] = useState(false);
+
   return (
     <Box className='box-shadow'>
       <Tabs variant='enclosed' size='lg'>
@@ -38,9 +40,9 @@ const ProjectTab = () => {
           </TabPanel>
           <TabPanel>
           {selectedTask ? (
-            <TaskDetail task={selectedTask} setSelectedTask={setSelectedTask} taskDetail={taskDetail}/>
+            <TaskDetail setFlag={setFlag} task={selectedTask} setSelectedTask={setSelectedTask} taskDetail={taskDetail}/>
           ) : (
-            <Tasks setSelectedTask={setSelectedTask} setTaskDetail={setTaskDetail}/>
+            <Tasks flag={flag} setSelectedTask={setSelectedTask} setTaskDetail={setTaskDetail}/>
           )}
           </TabPanel>
           <TabPanel>

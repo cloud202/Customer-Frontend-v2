@@ -28,7 +28,7 @@ const Roadmap = () => {
         }
 
         fetchData();
-    }, [templateId])
+    }, [])
 
     function getTotalTasksInPhase(phase) {
         let totalTasks = 0;

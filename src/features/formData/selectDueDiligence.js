@@ -15,10 +15,14 @@ export const selectDueDiligenceSlice = createSlice({
 
         setProjectData: (state,action)=>{
             state.projectData = action.payload
+        },
+
+        resetProjectId: (state,action)=>{
+            state.projectId = state.initialState;
         }
     }
 }) 
 
-export const {setProjectId,setProjectData} = selectDueDiligenceSlice.actions;
+export const {setProjectId,setProjectData,resetProjectId} = selectDueDiligenceSlice.actions;
 
 export default selectDueDiligenceSlice.reducer
