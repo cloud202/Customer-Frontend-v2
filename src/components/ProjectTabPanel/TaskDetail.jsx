@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardBody, CardHeader, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerFooter, DrawerHeader, DrawerOverlay, Flex, FormControl, FormLabel, HStack, Heading, Input, Menu, MenuButton, MenuItem, MenuList, Stack, StackDivider, Text, Textarea, useDisclosure, useToast } from '@chakra-ui/react';
+import { Box, Button, Card, CardBody, CardHeader, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerFooter, DrawerHeader, DrawerOverlay, Flex, FormControl, FormLabel, HStack, Heading, Input, Menu, MenuButton, MenuItem, MenuList, Spinner, Stack, StackDivider, Text, Textarea, useDisclosure, useToast } from '@chakra-ui/react';
 import { ArrowBack } from '@mui/icons-material';
 import React, { useCallback, useEffect, useState } from 'react';
 import SettingsSuggestIcon from '@mui/icons-material/SettingsSuggest';
@@ -17,6 +17,7 @@ const TaskDetail = ({setFlag,selectedTask,setSelectedTask,taskDetail}) => {
   const userInfo = useSelector((state)=> state.token.userInfo);
   const customerId = useSelector((state)=> state.token.customerId)
   const projectId = useSelector((state)=> state.selectDueDiligence.projectId);
+  const [loading,setLoading] = useState(false);
 
 
   const [taskType,setTaskType] = useState(`${taskDetail.task.taskId.task_type}`);
@@ -79,6 +80,7 @@ const TaskDetail = ({setFlag,selectedTask,setSelectedTask,taskDetail}) => {
       return;
     }
     try{
+      setLoading(true);
       const updatedTask = {
         customerId: customerId,
         projectOid: projectId,
@@ -99,18 +101,30 @@ const TaskDetail = ({setFlag,selectedTask,setSelectedTask,taskDetail}) => {
         updatedTask.updateFields.taskDescription = taskDescription;
       }
       const {data} = await axios.patch(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/project/task`,updatedTask);
+      
+      setFlag(true);
+      setSelectedTask(null);
+      setTimeout(()=>{
+        setLoading(false);
+        onClose()
+      },1000);
+
       toast({
         title: 'Task Updated Successfully.',
         status: 'success',
+        duration: 5000,
+        isClosable: true,
+      })
+    }catch(e){
+      console.log("Error updating Task",e);
+      toast({
+        title: 'Error Updating Task.',
+        status: 'error',
         duration: 4000,
         isClosable: true,
       })
-      setFlag(true);
-      setSelectedTask(null);
-      setTimeout(()=>{onClose()},1000);
+      setLoading(false);
 
-    }catch(e){
-      console.log("Error updating Task",e);
     }
   }
 
@@ -377,7 +391,7 @@ const TaskDetail = ({setFlag,selectedTask,setSelectedTask,taskDetail}) => {
             <Button variant='outline' mr={3} onClick={onClose}>
               Cancel
             </Button>
-            <Button colorScheme='blue' onClick={handleSubmit}>Save</Button>
+            <Button colorScheme='blue' onClick={handleSubmit} rightIcon={loading && <Spinner/>}>Save</Button>
           </DrawerFooter>
         </DrawerContent>
       </Drawer>

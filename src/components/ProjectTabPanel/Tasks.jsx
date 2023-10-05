@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   Divider,
+  Flex,
   Input,
   InputGroup,
   InputLeftElement,
@@ -12,6 +13,7 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Spinner,
   Table,
   Tbody,
   Text,
@@ -35,6 +37,7 @@ const Tasks = ({flag,setSelectedTask,setTaskDetail}) => {
     const projectId = useSelector((state)=> state.selectDueDiligence.projectId);
     // const projectData = useSelector((state) => state.phases.phases);
     const [projectData,setProjectData] = useState(null);
+    const [loading,setLoading] = useState(true);
     
     const handleSelect = (phase,module,task)=>{
       setTaskDetail({
@@ -53,6 +56,7 @@ const Tasks = ({flag,setSelectedTask,setTaskDetail}) => {
       }catch(e){
         console.log("Error fetching task",e);
       }
+      setLoading(false);
     }
     useEffect(()=>{
       fetchData();
@@ -115,6 +119,10 @@ const Tasks = ({flag,setSelectedTask,setTaskDetail}) => {
             </tbody>
           </table> */}
 
+      {loading? (
+      <Flex justifyContent ='center'>
+        <Spinner/>
+      </Flex>) : 
       <table style={{ width: '100%', border: '1px solid gray', borderRadius: '5px' }}>
         <thead>
           <tr style={{ border: '1px solid #d2d3d4', borderRadius: '5px', bg: 'gray' }}>
@@ -130,7 +138,6 @@ const Tasks = ({flag,setSelectedTask,setTaskDetail}) => {
               phase.modules.map((module, ind) => {
                 return module.tasks.map((task, ind) => (
                   <tr style={{ border: '1px solid #d2d3d4', borderRadius: '5px' }}>
-                    {/* Render the task in the corresponding column based on task_status */}
                     {(task.taskId.task_status === 'Onboarded' || !task.taskId.task_status) ? (
                       <td style={{ border: '1px solid #d2d3d4', borderRadius: '5px', color: '#3366CC', cursor: 'pointer' }} onClick={() => handleSelect(phase, module, task)}>
                         {task.taskId.name}
@@ -170,7 +177,7 @@ const Tasks = ({flag,setSelectedTask,setTaskDetail}) => {
               })
             )}
         </tbody>
-      </table>
+      </table>}
 
 
         </Box>
