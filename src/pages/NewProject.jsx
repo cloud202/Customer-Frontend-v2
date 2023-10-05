@@ -17,7 +17,7 @@ const NewProject = () => {
 
   const handleNext =()=>{
     if(!formData.name || formData.workloadInScope==='Select an option' || 
-        formData.cloudApproach==='Select an option' || formData.industry==='Select an option' || (formData.workloadType.length<1) || (formData.techStack.length<1)){
+        formData.cloudApproach==='Select an option' || formData.industry==='Select an option'){
       toast({
         title: 'Incomplete Form',
         description: "Please fill all the required fields.",
@@ -39,11 +39,20 @@ const NewProject = () => {
       if(!(postData.industry_id || postData.type_id)){
         return;
       }
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/admin/client/template_preferences/indtype`,postData);
+
+      const data ={
+        industryId: postData.industry_id,
+        typeId: postData.type_id,
+        techStacks: formData.techStack,
+        workloadTypes: formData.workloadType
+      }
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/admin/client/template_preferences`,data);
       setTableData(response.data);
     }catch(e){
       console.log("Error getting template",e);
     }
+
+    handleNext();
   }
   return (
     <>
@@ -63,7 +72,7 @@ const NewProject = () => {
 
         <Flex justifyContent="space-between" alignItems="center" mt='15px'>
           <Button isDisabled={currPage===1} leftIcon={<ArrowBackIcon />} onClick={handlePrevious} colorScheme='teal' variant='outline' >Previous</Button>
-          <Button isDisabled={currPage===2} rightIcon={<ArrowForwardIcon/>} onClick={()=> {handleTemplate();handleNext()}} colorScheme='teal' variant='outline'>
+          <Button isDisabled={currPage===2} rightIcon={<ArrowForwardIcon/>} onClick={()=> {handleTemplate()}} colorScheme='teal' variant='outline'>
             Get Template
           </Button>
         </Flex>

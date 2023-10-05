@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
   Box,
@@ -15,9 +15,13 @@ import ReorderIcon from '@mui/icons-material/Reorder';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import LoopIcon from '@mui/icons-material/Loop';
 import '../../css/user/moduleTable.css'
+import axios from 'axios';
 
 const Modules = () => {
-  const phases = useSelector((state)=> state.phases.phases);
+  // const phases = useSelector((state)=> state.phases.phases);
+  const [phases,setPhases] = useState([]);
+  const projectId = useSelector((state)=> state.selectDueDiligence.projectId);
+  const customerId = useSelector((state)=> state.token.customerId)
 
   const [searchQueries, setSearchQueries] = useState(
     Array.from({ length: phases.length }, () => '')
@@ -39,12 +43,39 @@ const Modules = () => {
       module.moduleId.name.toLowerCase().includes(query.toLowerCase())
     );
   };
+
+  function progressCalc(module){
+    let newCompletedTaskCount = 0;
+    let newTotalTaskCount = 0;
+             const tasks = module.tasks || [];
+             tasks.forEach(task => {
+                 newTotalTaskCount++;
+                 const taskStatus = task.taskId && task.taskId.task_status;
+                 if (taskStatus==="Completed") {
+                   newCompletedTaskCount++;
+                 }
+             });
+        
+        return Math.floor((newCompletedTaskCount/newTotalTaskCount)*100);
+  }
+
+  async function fetchPhases(){
+    try{
+      const {data} = await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/${projectId}/phases`);
+        setPhases(data)
+    }catch(e){
+      console.log("Error fetching task",e);
+    }
+  }
+
+  useEffect(()=>{
+    fetchPhases();
+  },[fetchPhases])
   
 
   return (
     <Box>
-      {phases.map((phaseIn, ind) => 
-      {return phaseIn && phaseIn.map((phase,ind)=>
+      {phases && phases.map((phase, ind) => 
       (
         <Box key={ind} mb="20px">
           <Text textTransform="uppercase" fontSize="lg" fontWeight={500}>
@@ -90,13 +121,15 @@ const Modules = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredModules(phase.modules, searchQueries[ind]).map((module, ind) => (
-                <tr key={ind}>
+              {filteredModules(phase.modules, searchQueries[ind]).map((module, ind) => 
+                { let progress = progressCalc(module);
+                  return <tr key={ind}>
                   <td className='module-data'>{module.moduleId.name}</td>
                   <td className='module-data'>{module.moduleId.description}</td>
                   <td className='module-data'>
-                    <span style={{ color: 'green', fontWeight: 'bold' }}>
-                      Completed
+                    <span style={{ color: progress<30? '#c90606': (progress<60? '#f29900':'green'), fontWeight: 'bold' }}>
+                    {progress}
+                      % Completed
                     </span>
                   </td>
                   <td className='module-data'>
@@ -117,13 +150,13 @@ const Modules = () => {
                       </Button>
                     </Box>
                   </td>
-                </tr>
-              ))}
+                </tr>}
+              )}
             </tbody>
           </table>
           <Divider mt='12px'/>
         </Box>
-      ))}
+      )
       )}
     </Box>
   );

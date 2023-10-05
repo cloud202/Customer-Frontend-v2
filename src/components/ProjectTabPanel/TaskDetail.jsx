@@ -68,7 +68,7 @@ const TaskDetail = ({setFlag,selectedTask,setSelectedTask,taskDetail}) => {
   };
 
   const handleSubmit = async ()=>{
-    if(!taskDetail.task.taskId.name || !startDate || !dueDate || !taskDescription){
+    if(!taskDetail.task.taskId.name || !startDate || !dueDate){
       toast({
         title: ' Incomplete Form.',
         description: 'Fill all the required fields',
@@ -91,11 +91,13 @@ const TaskDetail = ({setFlag,selectedTask,setSelectedTask,taskDetail}) => {
           dueOn: dueDate,
           effortEstimate: effortEstimated,
           taskStatus: status,
-          taskDescription: taskDescription,
           assignTo: userInfo.userName
         }
       }
 
+      if (taskDescription) {
+        updatedTask.updateFields.taskDescription = taskDescription;
+      }
       const {data} = await axios.patch(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/project/task`,updatedTask);
       toast({
         title: 'Task Updated Successfully.',
@@ -132,7 +134,7 @@ const TaskDetail = ({setFlag,selectedTask,setSelectedTask,taskDetail}) => {
                 <Heading size='xs' textTransform='uppercase' color='#404040'>
                 Status
                 </Heading>
-                <Text pt='2' fontSize={{ base: '12px', sm: '16px',md: '20px', lg: '20px' }}>{taskDetail.task.taskId.task_status || helper}</Text>
+                <Text pt='2' fontSize={{ base: '12px', sm: '16px',md: '20px', lg: '20px' }}>{taskDetail.task.taskId.task_status || "Onboarded"}</Text>
 
             </Box>
             <Box>
@@ -365,7 +367,7 @@ const TaskDetail = ({setFlag,selectedTask,setSelectedTask,taskDetail}) => {
                     </FormControl>)
                 } */}
 
-                <FormControl mb={{base: '8px',sm: '8px', lg: '10px'}} isRequired>
+                <FormControl mb={{base: '8px',sm: '8px', lg: '10px'}}>
                     <FormLabel fontSize={{base: '14px',sm: '14px',md: '16px', lg: '17px'}} color='gray.700' >Description</FormLabel>
                     <Textarea w='100%' type="text" placeholder="Enter the description" name='name' value={taskDescription} onChange={(e)=> setTaskDescription(e.target.value)}></Textarea>
                     </FormControl>

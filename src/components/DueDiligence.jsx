@@ -217,7 +217,7 @@ const DueDiligence = () => {
     </Menu>
     </FormControl>
 
-    <FormControl mb={{ base: '8px', sm: '8px', lg: '10px' }} isRequired>
+    <FormControl mb={{ base: '8px', sm: '8px', lg: '10px' }}>
     <FormLabel fontSize={{ base: '14px', sm: '14px', md: '16px', lg: '17px' }} color='gray.700'>
         Application/Workload Type
     </FormLabel>
@@ -274,7 +274,7 @@ const DueDiligence = () => {
             </Flex>
 </FormControl>
 
-<FormControl mb={{ base: '8px', sm: '8px', lg: '10px' }} isRequired>
+<FormControl mb={{ base: '8px', sm: '8px', lg: '10px' }}>
     <FormLabel fontSize={{ base: '14px', sm: '14px', md: '16px', lg: '17px' }} color='gray.700'>
         Tech Stacks
     </FormLabel>
