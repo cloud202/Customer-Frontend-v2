@@ -15,6 +15,9 @@ const { isOpen, onOpen, onClose } = useDisclosure()
   const [adoption,setAdoption] = useState([]);
   const [completedTaskCount,setCompletedTaskCount] = useState(0);
   const [totalTaskCount,setTotalTaskCount] = useState(0);
+  const [inProgressCount,setInProgressCount] = useState(0);
+  const [dueCount,setDueCount] = useState(0);
+
   const customerId = useSelector((state)=> state.token.customerId)
   const projectId = useSelector((state)=> state.selectDueDiligence.projectId);
 
@@ -36,8 +39,10 @@ async function fetchPhases(){
     try{
       const {data} = await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/${projectId}/phases`);
       let newCompletedTaskCount = 0;
-        let newTotalTaskCount = 0;
-
+      let newTotalTaskCount = 0;
+      let inProgressCount=0;
+      let dueCount=0;
+      let onBoardedCount=0;
 
       data.forEach(phase => {
         const modules = phase.modules || [];
@@ -48,6 +53,10 @@ async function fetchPhases(){
                 const taskStatus = task.taskId && task.taskId.task_status;
                 if (taskStatus==="Completed") {
                   newCompletedTaskCount++;
+                }else if(taskStatus==="In-progress"){
+                  inProgressCount++;
+                }else if(taskStatus==="Due"){
+                  dueCount++;
                 }
             });
         });
@@ -55,6 +64,8 @@ async function fetchPhases(){
     });
     setCompletedTaskCount(newCompletedTaskCount);
     setTotalTaskCount(newTotalTaskCount);
+    setInProgressCount(inProgressCount);
+    setDueCount(dueCount);
     }catch(e){
       console.log("Error fetching task",e);
     }
@@ -116,16 +127,16 @@ async function fetchPhases(){
                     </Heading>
                     <Box>
                         <Text pt='2' fontWeight={500}>
-                        <span style={{ color: 'gray' }}>Onboarded : </span> X
+                        <span style={{ color: 'gray' }}>Onboarded : </span> {totalTaskCount - (completedTaskCount+ inProgressCount+ dueCount)}
                         </Text>
                         <Text fontWeight={500}>
-                        <span style={{ color: 'gray' }}>Delivered : </span> Y
+                        <span style={{ color: 'gray' }}>Delivered : </span> {completedTaskCount}
                         </Text>
                         <Text fontWeight={500}>
-                        <span style={{ color: 'gray' }}>In-progress : </span> Z
+                        <span style={{ color: 'gray' }}>In-progress : </span> {inProgressCount}
                         </Text>
                         <Text fontWeight={500} color='red.600'>
-                        <span style={{ color: 'gray' }}>Due : </span>A
+                        <span style={{ color: 'gray' }}>Due : </span>{dueCount}
                         </Text>
                     </Box>
                 </Box>
