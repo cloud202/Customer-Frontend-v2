@@ -6,6 +6,8 @@ import Phases from './ProjectTabPanel/Phases'
 import Modules from './ProjectTabPanel/Modules'
 import Tasks from './ProjectTabPanel/Tasks.jsx'
 import TaskDetail from './ProjectTabPanel/TaskDetail'
+import { Download } from '@mui/icons-material'
+import Downloads from './ProjectTabPanel/Downloads'
 
 const ProjectTab = () => {
   const [selectedTask, setSelectedTask] = useState(null);
@@ -46,7 +48,7 @@ const ProjectTab = () => {
           )}
           </TabPanel>
           <TabPanel>
-            <p>three!</p>
+            <Downloads/>
           </TabPanel>
         </TabPanels>
       </Tabs>
