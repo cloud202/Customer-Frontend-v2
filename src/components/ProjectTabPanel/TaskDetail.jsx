@@ -22,7 +22,7 @@ const TaskDetail = ({setFlag,selectedTask,setSelectedTask,taskDetail}) => {
 
   const [taskType,setTaskType] = useState(`${taskDetail.task.taskId.task_type}`);
   const [solution,setSolution] = useState(null);
-  const [status,setStatus] = useState('Onboarded');
+  const [status,setStatus] = useState(taskDetail.task.taskId?.task_status || "Onboarded");
   const [taskName,setTaskName] = useState(taskDetail.task.taskId.name);
 
   const fetchSolDataEffect = useCallback(async () => {
@@ -38,8 +38,26 @@ const TaskDetail = ({setFlag,selectedTask,setSelectedTask,taskDetail}) => {
     fetchSolDataEffect();
   },[])
 
-  const [startDate, setStartDate] = useState('');
-  const [dueDate, setDueDate] = useState('');
+
+if (taskDetail.task.taskId.start_date) {
+  var start_date = formatDateForInput(taskDetail.task.taskId.start_date);
+  console.log('start', start_date);
+} else {
+  var start_date = '';
+}
+
+if (taskDetail.task.taskId.due_on) {
+  var due_date = formatDateForInput(taskDetail.task.taskId.due_on);
+  console.log('due', due_date);
+} else {
+  var due_date = '';
+}
+
+console.log('Task Detail', taskDetail);
+
+const [startDate, setStartDate] = useState(start_date);
+const [dueDate, setDueDate] = useState(due_date);
+
   const [effortEstimated, setEffortEstimated] = useState('');
   const [taskDescription,setTaskDescription] = useState(taskDetail.task.taskId.task_description || '');
 
@@ -132,6 +150,17 @@ const TaskDetail = ({setFlag,selectedTask,setSelectedTask,taskDetail}) => {
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     return new Date(dateStr).toLocaleDateString(undefined, options);
   };
+
+  function formatDateForInput(inputDate) {
+    const date = new Date(inputDate);
+    
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); 
+    const day = date.getDate().toString().padStart(2, '0');
+    
+    // Combine components in the desired format
+    return `${year}-${month}-${day}`;
+  }
 
   return (
     <div>
@@ -320,12 +349,12 @@ const TaskDetail = ({setFlag,selectedTask,setSelectedTask,taskDetail}) => {
 
             <FormControl mb={{ base: '8px', sm: '8px', lg: '10px' }} isRequired>
             <FormLabel fontSize={{ base: '14px', sm: '14px', md: '16px', lg: '17px' }} color='gray.700'>Start Date</FormLabel>
-            <Input w='100%' type="date" placeholder="Enter template name" name='name' onChange={handleStartDateChange} />
+            <Input w='100%' type="date" placeholder="Enter template name" name='name' value={startDate} onChange={handleStartDateChange} />
           </FormControl>
 
           <FormControl mb={{ base: '8px', sm: '8px', lg: '10px' }} isRequired>
             <FormLabel fontSize={{ base: '14px', sm: '14px', md: '16px', lg: '17px' }} color='gray.700'>Due On</FormLabel>
-            <Input w='100%' type="date" placeholder="Enter template name" name='name' onChange={handleDueDateChange} />
+            <Input w='100%' type="date" placeholder="Enter template name" name='name' value={dueDate} onChange={handleDueDateChange} />
           </FormControl>
 
           <FormControl mb={{ base: '8px', sm: '8px', lg: '10px' }} isRequired>
