@@ -25,6 +25,15 @@ const TaskDetail = ({setFlag,selectedTask,setSelectedTask,taskDetail}) => {
   const [status,setStatus] = useState(taskDetail.task.taskId?.task_status || "Onboarded");
   const [taskName,setTaskName] = useState(taskDetail.task.taskId.name);
 
+  const extractFileName = (url) => {
+    const parts = url.split('/');
+    const fileNameWithExtension = parts[parts.length - 1];
+    const fileName = fileNameWithExtension.split('.')[0];
+    console.log('fIlename',fileName);
+    return fileName;
+  };
+
+
   const fetchSolDataEffect = useCallback(async () => {
     try {
       const sol = await axios.get(`${process.env.REACT_APP_API_URL}/api/admin/master/project_solution`);
@@ -167,7 +176,6 @@ const [dueDate, setDueDate] = useState(due_date);
       <Text mb='15px' textAlign='start' p='5px' pl='10px' bg='#389785' color='white' borderRadius='5px' fontSize={{ base: '16px', sm: '18px',md: '25px', lg: '25px' }}>
         {taskDetail.task.taskId.name}
       </Text>
-      {console.log("Task Detail: ",taskDetail)}
 
       <Flex flexDir='row' flexWrap='wrap' gap={4} mb='10px' >
         <Card flexGrow='1' flexBasis='300px'>
@@ -255,8 +263,14 @@ const [dueDate, setDueDate] = useState(due_date);
                 <Heading size='xs' textTransform='uppercase' color='#404040'>
                 Playbook
                 </Heading>
-                <Text pt='2' fontSize={{ base: '12px', sm: '16px',md: '20px', lg: '20px' }} color='blue'>
-                Download 
+                <Text pt='2' fontSize={{ base: '12px', sm: '16px',md: '17px', lg: '17px' }} color='blue'>
+                {taskDetail.task.taskId.playbook.length > 0 ? (
+                  taskDetail.task.taskId.playbook.map((play, ind) => (
+                    <div key={ind} >
+                    <a href={play} target='_blank' rel="noreferrer">{extractFileName(play)}</a>
+                    </div>
+                  ))
+                ) : "Not available"}
                 </Text>
             </Box>
             </Stack>

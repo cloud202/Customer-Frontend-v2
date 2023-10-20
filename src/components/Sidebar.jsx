@@ -10,10 +10,13 @@ import CalculateOutlinedIcon from '@mui/icons-material/CalculateOutlined';
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import RoofingOutlinedIcon from '@mui/icons-material/RoofingOutlined';
 import RecentActorsIcon from '@mui/icons-material/RecentActors';
+import { useSelector } from 'react-redux';
 
 const Sidebar = () => {
     const location = useLocation();
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const isMember = useSelector((state)=> state.token.isMember);
+    console.log('isMember',isMember);
 
       const sidebarItems = [
         { label: "New Project", route: "/newproject",icon: AddBoxOutlinedIcon },
@@ -32,12 +35,19 @@ const Sidebar = () => {
         return (
           <List bg="#546269" position="fixed" minH="100vh"  p="12px" pt='20px'>
             {sidebarItems.map((item, index) => (
-              <Link to={item.route} key={index}>
-                <ListItem mb="10px" p="5px" color={location.pathname === item.route ? "#ffca39" : "#FFFFFF"} _hover={{borderRadius:'8px', backgroundColor: "#e6b01aa8" }}>
-                  <ListIcon as={item.icon} />
-                  {item.label}
-                </ListItem>
-              </Link>
+              isMember && item.label === "New Project" ? null : (
+                <Link to={item.route} key={index}>
+                  <ListItem
+                    mb="10px"
+                    p="5px"
+                    color={location.pathname === item.route ? "#ffca39" : "#FFFFFF"}
+                    _hover={{ borderRadius: '8px', backgroundColor: "#e6b01aa8" }}
+                  >
+                    <ListIcon as={item.icon} />
+                    {item.label}
+                  </ListItem>
+                </Link>
+              )
             ))}
           </List>
         );
@@ -63,7 +73,7 @@ const Sidebar = () => {
                     <DrawerBody>
                     <List spacing={3}>
                         {sidebarItems.map((item, index) => (
-                        <Link to={item.route} key={index}>
+                        isMember && item.label==="New Project" ? null: <Link to={item.route} key={index}>
                             <ListItem
                             mb="15px"
                             p="5px"

@@ -7,7 +7,9 @@ const initialState={
         email: '',
         userName: ''
     },
-    customerId: ''
+    customerId: '',
+    customerQc: '',
+    isMember: false
 }
 const tokenSlice = createSlice({
     name: 'token',
@@ -34,6 +36,14 @@ const tokenSlice = createSlice({
             state.customerId = action.payload
         },
 
+        setMember: (state,action)=>{
+            state.isMember = action.payload;
+        },
+
+        setCustomerQc: (state,action)=>{
+            state.customerQc = action.payload;
+        },
+
         resetCustomerId: (state,action)=>{
             state.customerId = initialState.customerId
         },
@@ -47,6 +57,6 @@ const tokenSlice = createSlice({
     }
 })
 
-export const {setIdToken,setAccessToken,setUserInfo,setCustomerId,resetCustomerId,resetState} = tokenSlice.actions;
+export const {setIdToken,setAccessToken,setUserInfo,setCustomerId,setMember,resetCustomerId,resetState,setCustomerQc} = tokenSlice.actions;
 
 export default tokenSlice.reducer

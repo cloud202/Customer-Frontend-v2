@@ -51,7 +51,8 @@ const Tasks = ({flag,setSelectedTask,setTaskDetail}) => {
 
     async function fetchData(){
       try{
-        const {data} = await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/${projectId}/phases`);
+        const {data} = await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/project/${projectId}/phases`);
+        // const {data} = await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/${projectId}/phases`);
         setProjectData(data);
       }catch(e){
         console.log("Error fetching task",e);

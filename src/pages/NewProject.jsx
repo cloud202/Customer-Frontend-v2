@@ -46,13 +46,13 @@ const NewProject = () => {
         techStacks: formData.techStack,
         workloadTypes: formData.workloadType
       }
+      handleNext();
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/admin/client/template_preferences`,data);
       setTableData(response.data);
     }catch(e){
       console.log("Error getting template",e);
     }
 
-    handleNext();
   }
   return (
     <>

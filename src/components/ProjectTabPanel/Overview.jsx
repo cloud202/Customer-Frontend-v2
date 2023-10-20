@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardBody, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerFooter, DrawerHeader, DrawerOverlay, Flex, FormControl, FormLabel, HStack, Heading, Input, Menu, MenuButton, MenuItem, MenuList, Progress, Stack, StackDivider, Text, Textarea, VStack, useDisclosure, useToast } from '@chakra-ui/react'
+import { Box, Button, Card, CardBody, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerFooter, DrawerHeader, DrawerOverlay, Flex, FormControl, FormLabel, HStack, Heading, Input, Menu, MenuButton, MenuItem, MenuList, Progress, Spinner, Stack, StackDivider, Table, TableCaption, TableContainer, Tbody, Td, Text, Textarea, Tfoot, Th, Thead, Tr, VStack, useDisclosure, useToast } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import '../../css/user/boxShadow.css'
 import { useSelector } from 'react-redux'
@@ -8,10 +8,29 @@ import { ChevronDownIcon } from '@chakra-ui/icons';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import axios from 'axios'
 import { useEffect } from 'react';
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+} from '@chakra-ui/react';
+import MyProfileForm from '../MyProfileForm';
+import { roles } from '../../data/role';
+import { Add } from '@mui/icons-material';
+
 
 const Overview = () => {
-const { isOpen, onOpen, onClose } = useDisclosure()
+  const { isOpen, onOpen, onClose } = useDisclosure()
   const btnRef = React.useRef()
+  const isMember = useSelector((state)=> state.token.isMember);
+
+
+  const { isOpen: isSecondDrawerOpen, onOpen: onSecondDrawerOpen, onClose: onSecondDrawerClose } = useDisclosure();
+  const secondModalBtnRef = React.useRef();
+  
   const [adoption,setAdoption] = useState([]);
   const [completedTaskCount,setCompletedTaskCount] = useState(0);
   const [totalTaskCount,setTotalTaskCount] = useState(0);
@@ -21,17 +40,18 @@ const { isOpen, onOpen, onClose } = useDisclosure()
 
 
   const customerId = useSelector((state)=> state.token.customerId)
+  const customerQc = useSelector((state)=> state.token.customerQc);
+
   const projectId = useSelector((state)=> state.selectDueDiligence.projectId);
   const [formData,setFormData]  = useState([]);
 
   const [startDate, setStartDate] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [effortEstimated, setEffortEstimated] = useState('');
+  const [memberData,setMemberData] = useState('');
  
-
 //   let completedTaskCount=0;
 //   let totalTaskCount = 0;
-  
 
   async function fetchData(){
     try{
@@ -45,7 +65,8 @@ const { isOpen, onOpen, onClose } = useDisclosure()
 
 async function fetchPhases(){
     try{
-      const {data} = await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/${projectId}/phases`);
+      // const {data} = await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/${projectId}/phases`);
+      const {data} = await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/project/${projectId}/phases`);
       let newCompletedTaskCount = 0;
       let newTotalTaskCount = 0;
       let inProgressCount=0;
@@ -121,8 +142,7 @@ async function fetchPhases(){
   }
 
   useEffect(()=>{
-    fetchFormData();
-    
+    fetchFormData();  
   },[])
 
     useEffect(()=>{
@@ -131,7 +151,7 @@ async function fetchPhases(){
 
     useEffect(()=>{
         fetchPhases();
-    },[])
+    },[fetchPhases])
 
     const userInfo = useSelector((state)=> state.token.userInfo);
     // const formData = useSelector((state)=> state.dueDiligenceResponse.dueDiligence);
@@ -182,7 +202,7 @@ async function fetchPhases(){
       }catch(e){
         console.log('Error updating project',e);
         toast({
-          title: 'Unable to  Updated Successfully.',
+          title: 'Unable to  Update.',
           status: 'error',
           duration: 3000,
           isClosable: true,
@@ -192,6 +212,74 @@ async function fetchPhases(){
 
     const [name,setName] = useState('');
     const [details,setDetails] = useState('');
+    const [loading,setLoading] = useState(false);
+
+    const [memberName, setMemberName] = useState('');
+    const [memberEmail, setMemberEmail] = useState('');
+    const [memberRole, setMemberRole] = useState('Select an option');
+    const [memberCompany, setMemberCompany] = useState('');
+
+
+  const handleMemberSubmit=async()=>{
+    try{
+      setLoading(true);
+      const customerData = await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/registration/${customerId}`);
+      const memberData = {
+        "customer_id": customerData.data.customer_id,
+        "customer_name": memberName,
+        "customer_role": memberRole,
+        "customer_company": memberCompany,
+        "customer_company_size": "",
+        "customer_country": "",
+        "customer_industry": "",
+        "customer_email": memberEmail,
+        "customer_mobile":{
+          "countryCode": "",
+          "phoneNumber": ""
+        },
+        "isMember":true,
+        "projects":[projectId]
+      }
+      
+      const {data} = await axios.post(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/registration`,memberData);
+      console.log('Team Member Data',data);
+      toast({
+        title: 'Team Member Added',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      })  
+
+        setTimeout(()=>{
+          onSecondDrawerClose();
+          setLoading(false);
+      },1000)
+      
+    }catch(e){
+      console.log("Error adding team member",e);
+      toast({
+        title: 'Unable to add member.',
+        description: "Please Try again later",
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      })
+      setLoading(false);
+
+    }
+  }
+
+  async function fetchMemberData(){
+    try{
+      const {data} = await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/member/${customerQc}`);
+      setMemberData(data);
+    }catch(e){
+      console.log('Error fetching member data',e);
+    }
+  }
+  useEffect(() => {
+    fetchMemberData();
+  }, [])
 
   return (
     <Flex flexDir='column'>
@@ -216,7 +304,7 @@ async function fetchPhases(){
                     </Text>
 
                     <Text fontWeight={500}>
-                    <span style={{ color: 'gray' }}>Days Remaining : </span>{effortEstimated + " Days"}
+                    <span style={{ color: 'gray' }}>Days Remaining : </span>{effortEstimated? effortEstimated + " Days": "Not available"}
                     </Text>
 
                     {/* <Text fontWeight={500}>
@@ -270,9 +358,15 @@ async function fetchPhases(){
                     </Box>
                 </Box>
                 <Box>
+                  <Flex justifyContent='space-between'>
                     <Heading size='xs' textTransform='uppercase'>
                     Project Team Report
                     </Heading>
+
+                    <Text pt='2' fontWeight={500}>
+                      {!isMember && <span style={{ color: 'blue',cursor: 'pointer' }} onClick={onSecondDrawerOpen}>Add New Team Member</span>}
+                    </Text>
+                  </Flex>
                     <Box>
                         <Text pt='2' fontWeight={500}>
                         <span style={{ color: 'gray' }}>Team Member Name : </span> {userInfo.userName}
@@ -356,6 +450,116 @@ async function fetchPhases(){
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
+
+           
+      <Drawer isOpen={isSecondDrawerOpen} placement="bottom" onClose={onSecondDrawerClose}>
+          <DrawerOverlay />
+          <DrawerContent>
+          <DrawerCloseButton/>
+            <DrawerHeader>Add a New Team Member</DrawerHeader>
+            <DrawerBody>
+              <FormControl mb={{ base: '8px', sm: '8px', lg: '10px' }}>
+                <FormLabel fontSize={{ base: '14px', sm: '14px', md: '16px', lg: '17px' }} color='gray.700'>
+                  Name
+                </FormLabel>
+                <Input
+                  w='100%'
+                  type="text"
+                  placeholder="Enter team member name"
+                  name='customer_name'
+                  value={memberName}
+                  onChange={(e) => setMemberName(e.target.value)}
+                />
+              </FormControl>
+
+              <FormControl mb={{ base: '8px', sm: '8px', lg: '10px' }}>
+                      <FormLabel fontSize={{ base: '14px', sm: '14px', md: '16px', lg: '17px' }} color='gray.700'>
+                        Business Email
+                      </FormLabel>
+                      <Input
+                        w='100%'
+                        type="email"
+                        placeholder="Enter team member email"
+                        name='customer_email'
+                        value={memberEmail}
+                        onChange={(e) => setMemberEmail(e.target.value)}
+                      />
+                    </FormControl>
+
+                    <FormControl mb={{ base: '8px', sm: '8px', lg: '10px' }}>
+                      <FormLabel fontSize={{ base: '14px', sm: '14px', md: '16px', lg: '17px' }} color='gray.700'>
+                        Role
+                      </FormLabel>
+                      <Menu>
+                        <MenuButton w='100%' as={Flex} variant="outline" colorScheme="gray" color='gray.700' className='menu-button'>          
+                        <HStack display='flex' justifyContent='space-between'>
+                        <Text>{memberRole}</Text>
+                        <ArrowDropDownIcon />
+                        </HStack>
+                        </MenuButton>
+                        <MenuList style={{height: '300px',overflow: 'auto'}}>
+                          {roles.map((role,ind)=> <MenuItem key={ind} onClick={()=>setMemberRole(role)}>{role}</MenuItem>)}
+                        </MenuList>
+                    </Menu>
+                    </FormControl>
+
+                    <FormControl mb={{ base: '8px', sm: '8px', lg: '10px' }}>
+                      <FormLabel fontSize={{ base: '14px', sm: '14px', md: '16px', lg: '17px' }} color='gray.700'>
+                        Company
+                      </FormLabel>
+                      <Input
+                        w='100%'
+                        type="text"
+                        placeholder="Enter your company name"
+                        name='customer_company'
+                        value={memberCompany}
+                        onChange={(e) => setMemberCompany(e.target.value)}
+                      />
+                    </FormControl>
+                    <Flex justifyContent='flex-end'>
+                    <Button colorScheme='blue' mr={3} onClick={handleMemberSubmit}>
+                      Add
+                    </Button>
+                    <Button variant='ghost' onClick={onSecondDrawerClose}>
+                      Close
+                    </Button>
+                    </Flex>
+                    
+                    <Text fontSize='20px' fontWeight='500' mb='7px'>List of Team Members</Text>
+                    <TableContainer>
+                      <Table variant='simple' size='md'>
+                        <Thead>
+                          <Tr>
+                            <Th>Name</Th>
+                            <Th>Email</Th>
+                            <Th>Role</Th>
+                            <Th>Action</Th>
+                          </Tr>
+                        </Thead>
+                        <Tbody>
+                        {memberData && memberData.map((member, ind) => (
+                          <Tr key={ind}>
+                            <Td>{member.customer_name}</Td>
+                            <Td>{member.customer_email}</Td>
+                            <Td>{member.customer_role}</Td>
+                            <Td>
+                              <Flex gap={2}>
+                              <Button size='sm'>Invite</Button>
+                              <Button size='sm'>Remove</Button>
+                              </Flex>
+                            </Td>
+                          </Tr>
+                        ))}
+                        </Tbody>
+                      </Table>
+                    </TableContainer>
+
+            </DrawerBody>
+            
+          </DrawerContent>
+        </Drawer>
+
+
     </Flex>
   )
 }

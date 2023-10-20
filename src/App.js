@@ -10,7 +10,7 @@ import SelectedProject from './pages/SelectedProject';
 import MyProject from './pages/MyProject'
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
-import { setCustomerId } from './features/userData/token';
+import { setCustomerId, setCustomerQc, setMember, setcustomerQc } from './features/userData/token';
 import { useEffect } from 'react';
 import { resetProfileData, setProfileData } from './features/formData/profileForm';
 import Task from './pages/Task';
@@ -26,11 +26,15 @@ function App() {
   const userInfo = useSelector((state)=> state.token.userInfo);
   const profileData = useSelector((state)=> state.profileForm.profileData)
   const dispatch = useDispatch();
+  const isMember = useSelector((state)=> state.token.isMember);
 
   async function fetchData(){
     try{
       const {data} = await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/registration/email/${userInfo.email}`);
+      
       dispatch(setCustomerId(data._id));
+      dispatch(setMember(data.isMember));
+      dispatch(setCustomerQc(data.customer_id));
 
       if(data?.customer_role){
         dispatch(setProfileData({field:"customer_role",value: data.customer_role}));
@@ -59,7 +63,7 @@ function App() {
            <Route path="/">
            <Route index path="/" element={<CustomerRoot/>}  />
             <Route index path="/user" element={<CustomerDashboard/>}  />
-            <Route path="/newproject" element={<NewProject/>}  />
+            {!isMember && <Route path="/newproject" element={<NewProject/>}  />}
             <Route path="/myproject" element={<MyProject/>}  />
             <Route path="/selectedproject" element={<SelectedProject/>}  />
             <Route path="/task" element={<Task/>}  />

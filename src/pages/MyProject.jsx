@@ -19,11 +19,15 @@ const MyProject = () => {
     const [loading,setLoading] = useState(true);
     const formData = useSelector((state)=> state.dueDiligence.formData);
     const dispatch = useDispatch();
+    const isMember = useSelector((state)=> state.token.isMember);
+
 
     const handleNext = async (project)=>{
         dispatch(resetFormData());
         try{
-          const response =  await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/${project._id}/phases`);
+          console.log(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/project/${project._id}/phases`)
+          const response =  await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/project/${project._id}/phases`);
+          // const response =  await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/${project._id}/phases`);
           dispatch(setPhasesData(response.data));
           dispatch(setProjectData(response.data));
 
@@ -48,6 +52,7 @@ const MyProject = () => {
 
       const fetchData = useCallback(async () => {
         try {
+          console.log(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/allProjects`)
             const { data } = await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/allProjects`)
             setProject(data);
             setProjectFound(true);
@@ -94,7 +99,7 @@ const MyProject = () => {
                   </Flex>)
                  
                 :  (<Flex p='10px' className='box-shadow' gap={3} flexWrap='wrap' justifyContent='flex-start'>
-        {!projectFound && 
+        {!projectFound && !isMember &&
         <Flex flexDir='column' w='100%' h='150px' alignItems='center' justifyContent='center' gap={4}>
         <Text fontSize='xl'>
             Looks like you haven't created any project yet. Start your Modernization Journey with New Project 

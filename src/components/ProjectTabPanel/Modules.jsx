@@ -61,7 +61,8 @@ const Modules = () => {
 
   async function fetchPhases(){
     try{
-      const {data} = await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/${projectId}/phases`);
+      const {data} = await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/project/${projectId}/phases`);
+      // const {data} = await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/${projectId}/phases`);
         setPhases(data)
     }catch(e){
       console.log("Error fetching task",e);
