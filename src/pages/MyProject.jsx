@@ -68,8 +68,6 @@ const MyProject = () => {
         fetchData(); 
     }, [fetchData]);
     
-  
-
   return (
     <>
     <Navbar/>
@@ -149,7 +147,7 @@ const MyProject = () => {
         )}
 
     </Flex>)}
-    </> : <ProjectTab/>}
+    </> : <ProjectTab setCurrPage={setCurrPage}/>}
 
     </GridItem>
     </Grid>

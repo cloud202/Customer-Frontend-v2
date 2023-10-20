@@ -20,6 +20,8 @@ import {
 import MyProfileForm from '../MyProfileForm';
 import { roles } from '../../data/role';
 import { Add } from '@mui/icons-material';
+import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
+import PersonRemoveAlt1Icon from '@mui/icons-material/PersonRemoveAlt1';
 
 
 const Overview = () => {
@@ -221,6 +223,16 @@ async function fetchPhases(){
 
 
   const handleMemberSubmit=async()=>{
+    if(!memberName || memberRole==="Select an option" || !memberCompany || !memberEmail){
+      toast({
+        title: 'Unable to add',
+        description: 'Fill all required fields',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      }) 
+      return;
+    }
     try{
       setLoading(true);
       const customerData = await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/registration/${customerId}`);
@@ -250,10 +262,15 @@ async function fetchPhases(){
         isClosable: true,
       })  
 
-        setTimeout(()=>{
-          onSecondDrawerClose();
-          setLoading(false);
-      },1000)
+        // setTimeout(()=>{
+        //   onSecondDrawerClose();
+        // },1000)
+        await fetchMemberData();
+        setLoading(false);
+        setMemberName('');
+        setMemberCompany('');
+        setMemberRole('Select an option');
+        setMemberEmail('');
       
     }catch(e){
       console.log("Error adding team member",e);
@@ -266,6 +283,57 @@ async function fetchPhases(){
       })
       setLoading(false);
 
+    }
+  }
+
+  const handleInvite=async (memberId)=>{
+    try{
+      const inviteData={
+        memberId,
+        projectId,
+      }
+      const {data} = await axios.patch(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/project/assign`,inviteData);
+      toast({
+        title: 'Invited Successfully',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      }) 
+      await fetchMemberData();
+    }catch(e){
+      console.log("Error Inviting Member",e);
+      toast({
+        title: 'Unable to invite',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      }) 
+    }
+  }
+
+  const handleRemove= async (memberId)=>{
+    try{
+      const removeData={
+        memberId,
+        projectId
+      }
+
+      const {data} = await axios.patch(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/project/revoke`,removeData);
+      toast({
+        title: 'Removed Successfully',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      }) 
+      await fetchMemberData();
+    }catch(e){
+      console.log("Error Removing Member",e);
+      toast({
+        title: 'Unable to remove',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      }) 
     }
   }
 
@@ -527,7 +595,7 @@ async function fetchPhases(){
                     
                     <Text fontSize='20px' fontWeight='500' mb='7px'>List of Team Members</Text>
                     <TableContainer>
-                      <Table variant='simple' size='md'>
+                      <Table variant='simple' size={{base:'sm',sm: 'sm',md:'md',lg: 'md'}}>
                         <Thead>
                           <Tr>
                             <Th>Name</Th>
@@ -543,10 +611,11 @@ async function fetchPhases(){
                             <Td>{member.customer_email}</Td>
                             <Td>{member.customer_role}</Td>
                             <Td>
-                              <Flex gap={2}>
-                              <Button size='sm'>Invite</Button>
-                              <Button size='sm'>Remove</Button>
-                              </Flex>
+                              {
+                                member.projects.includes(projectId)? 
+                                  <Button size='sm' rightIcon={<PersonRemoveAlt1Icon/>} colorScheme='red' onClick={()=>handleRemove(member._id)}>Remove</Button>:
+                                  <Button size='sm' rightIcon={<PersonAddAlt1Icon/>} colorScheme='purple' onClick={()=>handleInvite(member._id)}>Invite</Button>
+                              }
                             </Td>
                           </Tr>
                         ))}
