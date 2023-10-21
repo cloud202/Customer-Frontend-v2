@@ -82,8 +82,8 @@ const SelectedProject = () => {
         {currPage !==2 && <Flex justifyContent='space-between' alignItems="center" mt='15px' >
         <Button leftIcon={<ArrowBackIcon/>} onClick={()=> {handlePrevious()}} >Previous</Button>
         <Flex justifyContent='flex-end' gap='4px'>
-          <Button leftIcon={<SettingsSuggestIcon />} onClick={()=> {}} colorScheme='orange'>Customize</Button>
-          <Button rightIcon={<ArrowForwardIcon/>} onClick={handleNext} colorScheme='blue'>
+          <Button leftIcon={<SettingsSuggestIcon />} onClick={()=> {}} colorScheme='teal'>Customize</Button>
+          <Button rightIcon={<ArrowForwardIcon/>} onClick={handleNext} colorScheme='facebook'>
             Start Project
           </Button>
         </Flex>

@@ -12,6 +12,7 @@ const NewProject = () => {
   const [currPage,setCurrPage] = useState(1);
   const [tableData,setTableData] = useState([]);
   const toast = useToast();
+  const [loading,setLoading] = useState(true);
   const postData = useSelector((state)=> state.dueDiligence.postData);
   const formData = useSelector((state)=> state.dueDiligence.formData);
 
@@ -39,6 +40,7 @@ const NewProject = () => {
       if(!(postData.industry_id || postData.type_id)){
         return;
       }
+      setLoading(true);
 
       const data ={
         industryId: postData.industry_id,
@@ -49,6 +51,7 @@ const NewProject = () => {
       handleNext();
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/admin/client/template_preferences`,data);
       setTableData(response.data);
+      setLoading(false);
     }catch(e){
       console.log("Error getting template",e);
     }
@@ -68,7 +71,7 @@ const NewProject = () => {
         {/* <Progress value={100/5 * currPage} size='md' colorScheme='green' mb='10px'/> */}
 
         {currPage===1 && <DueDiligence/>}
-        {currPage===2 && <SelectTemplate tableData={tableData}/>}
+        {currPage===2 && <SelectTemplate tableData={tableData} loading={loading} />}
 
         <Flex justifyContent="space-between" alignItems="center" mt='15px'>
           <Button isDisabled={currPage===1} leftIcon={<ArrowBackIcon />} onClick={handlePrevious} colorScheme='teal' variant='outline' >Previous</Button>

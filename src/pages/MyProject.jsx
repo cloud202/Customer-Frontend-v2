@@ -147,7 +147,7 @@ const MyProject = () => {
         )}
 
     </Flex>)}
-    </> : <ProjectTab setCurrPage={setCurrPage}/>}
+    </> : <ProjectTab setCurrPage={setCurrPage} isNew={false}/>}
 
     </GridItem>
     </Grid>

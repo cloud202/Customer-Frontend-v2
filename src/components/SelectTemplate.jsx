@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, Progress, Spinner, Text } from '@chakra-ui/react'
 import React from 'react'
 import '../css/user/table.css'
 import '../css/user/boxShadow.css'
@@ -7,7 +7,7 @@ import { setProjectId } from '../features/formData/selectDueDiligence'
 import { useNavigate } from 'react-router-dom'
 
 
-const SelectTemplate = ({tableData}) => {
+const SelectTemplate = ({tableData,loading}) => {
   const navigate = useNavigate();
 
   const selectDueDiligence = useSelector((state) => state.selectDueDiligence.selectDueDiligence);
@@ -18,6 +18,8 @@ const SelectTemplate = ({tableData}) => {
     dispatch(setProjectId(id));
     navigate('/selectedproject');
   }
+
+
   
   return (
     <>
@@ -30,7 +32,16 @@ const SelectTemplate = ({tableData}) => {
       Recommended Cloud Adoption Template
       </Text>
       
-      <table className='table'>
+      {loading? 
+      <Flex justifyContent='center'>
+        <Spinner
+            thickness='4px'
+            speed='0.6s'
+            emptyColor='gray.200'
+            color='blue.500'
+            size='lg'
+          />
+        </Flex>: <table className='table'>
         <thead>
         <tr >
           <th className='table-data' style={{backgroundColor: '#7e7e7ef5',color: 'rgb(245, 245, 245)'}}>Project Template</th>
@@ -50,13 +61,13 @@ const SelectTemplate = ({tableData}) => {
                 {project.template_usecase}
               </td>
               <td className='table-data table-data-td'>
-                <Button colorScheme='blue' variant='outline' size='sm' onClick={()=> handleSelectTemplate(project._id)}>Select</Button>
+                <Button colorScheme='teal' size='sm' onClick={()=> handleSelectTemplate(project._id)}>Select</Button>
               </td>
           </tr>
             </>)     
             }
           </tbody>
-      </table>
+      </table>}
       </Flex>
     </>
   )

@@ -9,8 +9,9 @@ import TaskDetail from './ProjectTabPanel/TaskDetail'
 import { Download } from '@mui/icons-material'
 import Downloads from './ProjectTabPanel/Downloads'
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
+import { useNavigate } from 'react-router-dom'
 
-const ProjectTab = ({setCurrPage}) => {
+const ProjectTab = ({setCurrPage,isNew=true}) => {
   const [selectedTask, setSelectedTask] = useState(null);
   const [taskDetail,setTaskDetail] = useState({
     phase: '',
@@ -19,16 +20,19 @@ const ProjectTab = ({setCurrPage}) => {
   })
 
   const [flag,setFlag] = useState(false);
+  const navigate = useNavigate();
+
+  const handleMyProjects=()=>{
+    isNew? navigate('/myproject') : setCurrPage(1);
+  }
 
   return (
     <Box className='box-shadow'>
-      <Tabs variant='enclosed' size='lg' defaultIndex={1}>
+      <Tabs variant='enclosed' size='lg'>
         <TabList>
-        <Tab>
         <Tooltip label='Go Back to My Projects'>
-        <Button size='sm' variant='outline' p='2' leftIcon={<KeyboardBackspaceIcon/> } onClick={()=>setCurrPage((prevState)=> prevState-1)}></Button>
+        <Button m='10px' size='sm' variant='outline' p='2' leftIcon={<KeyboardBackspaceIcon/> } onClick={handleMyProjects}></Button>
         </Tooltip>
-        </Tab>
           <Tab><Text fontSize='md' fontWeight='semibold' >Overview</Text></Tab>
           <Tab><Text fontSize='md' fontWeight='semibold' >Phases</Text></Tab>
           <Tab><Text fontSize='md' fontWeight='semibold' >Modules</Text></Tab>
@@ -38,9 +42,6 @@ const ProjectTab = ({setCurrPage}) => {
         </TabList>
 
         <TabPanels>
-          <TabPanel>
-
-          </TabPanel>
           <TabPanel>
             <Overview/>
           </TabPanel>
