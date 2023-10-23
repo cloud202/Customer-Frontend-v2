@@ -33,10 +33,10 @@ const PhaseCol = ({phase,num}) => {
                         module.tasks.map((taskList, taskInd) => (
                             <div key={taskInd}>
                             {taskList.taskId.task_type === "Custom" && (
-                                <Button colorScheme='blue' style={{cursor: 'default'}} _hover='none'>{taskList.taskId.task_actionName}</Button>
+                                <Flex bg='#3182CE' borderRadius='5px' p='8px' pl='10px' pr='10px' color='white' fontWeight='500'>{taskList.taskId.task_actionName}</Flex>
                                 )}
                             {taskList.taskId.task_type === "Standard" && (
-                                <Button colorScheme='orange' style={{cursor: 'default'}} _hover='none'>{taskList.taskId.task_solutionid.name}</Button>
+                                <Flex bg='#DD6B20' borderRadius='5px' p='8px' pl='10px' pr='10px' color='white' fontWeight='500'>{taskList.taskId.task_solutionid.name}</Flex>
                                 )}
                         </div>
                         ))
