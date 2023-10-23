@@ -109,7 +109,6 @@ const [dueDate, setDueDate] = useState(due_date);
     try{
       setLoading(true);
       const updatedTask = {
-        customerId: customerId,
         projectOid: projectId,
         phaseOid: taskDetail.phase._id,
         moduleOid: taskDetail.module._id,

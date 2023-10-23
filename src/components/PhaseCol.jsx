@@ -43,7 +43,7 @@ const PhaseCol = ({phase,num}) => {
                         ))      
                     }
                     </Flex>   
-                    </Flex>
+            </Flex>
             </Box>
         </Flex>
     

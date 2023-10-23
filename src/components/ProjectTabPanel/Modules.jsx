@@ -4,10 +4,22 @@ import {
   Box,
   Button,
   Divider,
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  FormControl,
+  FormLabel,
   Input,
   InputGroup,
   InputLeftElement,
   Text,
+  Textarea,
+  useDisclosure,
+  useToast,
 } from '@chakra-ui/react';
 import { SearchIcon } from '@chakra-ui/icons';
 import AddIcon from '@mui/icons-material/Add';
@@ -44,6 +56,55 @@ const Modules = () => {
     );
   };
 
+  const toast = useToast();
+  const [startDate, setStartDate] = useState('');
+  const [dueDate, setDueDate] = useState('');
+  const [effortEstimated, setEffortEstimated] = useState('');
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [name,setName] = useState('');
+  const [details,setDetails] = useState('');
+  const [loading,setLoading] = useState(false);
+  const [phaseId,setPhaseId] = useState(null);
+  const [moduleId,setModuleId] = useState(null);
+  const btnRef = React.useRef()
+
+  function formatDate(inputDate) {
+    const date = new Date(inputDate);
+    
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); 
+    const day = date.getDate().toString().padStart(2, '0');
+    
+    // Combine components in the desired format
+    return `${year}-${month}-${day}`;
+  }
+
+
+  const handleStartDateChange = (event) => {
+    setStartDate(event.target.value);
+  };
+
+  const handleDueDateChange = (event) => {
+    setDueDate(event.target.value);
+  };
+
+  const calculateEffortEstimated = () => {
+    if (startDate && dueDate) {
+      const startDateTime = new Date(startDate).getTime();
+      const dueDateTime = new Date(dueDate).getTime();
+      const differenceInMilliseconds = dueDateTime - startDateTime;
+      const differenceInDays = differenceInMilliseconds / (1000 * 3600 * 24);
+
+      setEffortEstimated(differenceInDays);
+    } else {
+      setEffortEstimated('');
+    }
+  };
+  useEffect(() => {
+    calculateEffortEstimated();
+  }, [startDate, dueDate]);
+
   function progressCalc(module){
     let newCompletedTaskCount = 0;
     let newTotalTaskCount = 0;
@@ -67,6 +128,83 @@ const Modules = () => {
     }catch(e){
       console.log("Error fetching task",e);
     }
+  }
+
+  const handleSubmit = async()=>{
+    if(!name || !details || !startDate || !dueDate){
+      toast({
+        title: 'Incomplete Form',
+        description: "All Fields Required",
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      })
+      return;
+    }
+    try{
+      setLoading(true);
+
+      const updateModule = {
+          "projectOid": projectId,
+          "phaseOid": phaseId,
+          "moduleOid": moduleId,
+          "updateFields":{
+              "name": name,
+              "description": details,
+              "scope": "none",
+              "startDate": startDate,
+              "dueOn": dueDate,
+          }
+      }
+
+      const {data}  = await axios.patch(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/project/module`,updateModule);
+      
+      toast({
+        title: 'Module Updated Successfully.',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      })
+
+      setName('');
+      setStartDate('');
+      setDueDate('');
+      setDetails('');
+      setEffortEstimated('');
+
+      setLoading(false);
+      onClose();
+      fetchPhases();
+    }catch(e){
+      console.log('Error updating project',e);
+      toast({
+        title: 'Unable to  Update.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      })
+    }
+  }
+
+  const handleUpdate = (phaseId,module)=>{
+    setName(module.moduleId.name)
+    setDetails(module.moduleId.description);
+    setPhaseId(phaseId);
+    setModuleId(module._id);
+
+    var start_date = module.moduleId.start_date;
+    var end_date = module.moduleId.due_on;
+
+    if(start_date){
+      var temp1=formatDate(start_date);
+      var temp2 =formatDate(end_date);
+      setStartDate(temp1);
+      setDueDate(temp2);
+    }else{
+      setStartDate('');
+      setDueDate('');
+    }
+    onOpen();
   }
 
   useEffect(()=>{
@@ -139,6 +277,7 @@ const Modules = () => {
                         colorScheme="orange"
                         rightIcon={<LoopIcon fontSize="small" />}
                         size="xs"
+                        onClick={()=>handleUpdate(phase._id,module)}
                       >
                         Update
                       </Button>
@@ -159,6 +298,54 @@ const Modules = () => {
         </Box>
       )
       )}
+
+      <Drawer
+        isOpen={isOpen}
+        placement='bottom'
+        onClose={onClose}
+        size='sm'
+        finalFocusRef={btnRef}
+      >
+        <DrawerOverlay/>
+        <DrawerContent>
+          <DrawerCloseButton/>
+          <DrawerHeader>Update Phase</DrawerHeader>
+
+          <DrawerBody>
+            <FormControl mb={{base: '8px',sm: '8px', lg: '10px'}} isRequired>
+                <FormLabel fontSize={{base: '14px',sm: '14px',md: '16px', lg: '17px'}} color='gray.700'>Phase Name</FormLabel>
+                <Input w='100%' type="text" placeholder="Enter phase name" name='name' value={name} onChange={(e)=> setName(e.target.value)}/>
+            </FormControl>
+
+            <FormControl mb={{base: '8px',sm: '8px', lg: '10px'}} isRequired>
+                <FormLabel fontSize={{base: '14px',sm: '14px',md: '16px', lg: '17px'}} color='gray.700'>Start Date</FormLabel>
+                <Input w='100%' type="date" placeholder="Enter template name" name='name' value={startDate} onChange={(e)=> handleStartDateChange(e)}/>
+            </FormControl>
+
+            <FormControl mb={{base: '8px',sm: '8px', lg: '10px'}} isRequired>
+                <FormLabel fontSize={{base: '14px',sm: '14px',md: '16px', lg: '17px'}} color='gray.700'>Due On</FormLabel>
+                <Input w='100%' type="date" placeholder="Enter template name" name='name' value={dueDate} onChange={(e)=> handleDueDateChange(e)}/>
+            </FormControl>
+
+            <FormControl mb={{base: '8px',sm: '8px', lg: '10px'}} isRequired>
+                <FormLabel fontSize={{base: '14px',sm: '14px',md: '16px', lg: '17px'}} color='gray.700'>Days Remaining</FormLabel>
+                <Input w='100%' isDisabled={true} type="text" placeholder="Effort Estimated" name='name' value={effortEstimated!=="" ? effortEstimated + "Days": ""} />
+            </FormControl>
+
+            <FormControl mb={{base: '8px',sm: '8px', lg: '10px'}} isRequired>
+                <FormLabel fontSize={{base: '14px',sm: '14px',md: '16px', lg: '17px'}} color='gray.700'>Phase Description</FormLabel>
+                <Textarea w='100%' type="text" placeholder="Enter phase description" name='name' value={details} onChange={(e)=> setDetails(e.target.value)}></Textarea>
+            </FormControl>
+          </DrawerBody>
+
+          <DrawerFooter>
+            <Button variant='outline' mr={3} onClick={onClose}>
+              Cancel
+            </Button>
+            <Button colorScheme='blue' onClick={handleSubmit}>Save</Button>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
     </Box>
   );
 };
