@@ -15,8 +15,6 @@ const Downloads = () => {
       console.log(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/project/${projectId}`)
       const {data} = await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/project/${projectId}/links`);
       setProjectData(data)
-
-        console.log("Donwload",data);
     }catch(e){
       console.log("Error fetching task",e);
     }
@@ -28,59 +26,57 @@ const Downloads = () => {
 
   return (
     <Box>
-      {projectData.length!==0 && <table style={{ width: '100%', border: '1px solid gray', borderRadius: '5px' }}>
+    {projectData.length !== 0 && (
+      <table style={{ width: '100%', border: '1px solid gray', borderRadius: '5px' }}>
         <thead>
-          <tr style={{ border: '1px solid #d2d3d4', borderRadius: '5px', bg: 'gray' }}>
-            <th style={{ border: '1px solid #d2d3d4', backgroundColor: '#EDF2F7', fontWeight: '500' }}>Sales</th>
-            <th style={{ border: '1px solid #d2d3d4', backgroundColor: '#EDF2F7', fontWeight: '500' }}>Funding</th>
-            <th style={{ border: '1px solid #d2d3d4', backgroundColor: '#EDF2F7', fontWeight: '500' }}>Delivery</th>
-            <th style={{ border: '1px solid #d2d3d4', backgroundColor: '#EDF2F7', fontWeight: '500' }}>Operations</th>
+          <tr style={{ border: '1px solid #d2d3d4', borderRadius: '5px', backgroundColor: 'gray' }}>
+            <th style={{ border: '1px solid #d2d3d4', backgroundColor: '#EDF2F7', fontWeight: '500',fontSize: '16px' }}>Sales</th>
+            <th style={{ border: '1px solid #d2d3d4', backgroundColor: '#EDF2F7', fontWeight: '500',fontSize: '16px' }}>Funding</th>
+            <th style ={{ border: '1px solid #d2d3d4', backgroundColor: '#EDF2F7', fontWeight: '500',fontSize: '16px' }}>Delivery</th>
+            <th style={{ border: '1px solid #d2d3d4', backgroundColor: '#EDF2F7', fontWeight: '500',fontSize: '16px' }}>Operations</th>
           </tr>
         </thead>
         <tbody>
-        <tr>
-          <td style={{ border: '1px solid #d2d3d4' }}>
-            {projectData.sales.map((sale, index) => (
-              <div key={index}>
-                <a href={sale} target="_blank" rel="noopener noreferrer">
-                  {sale.substring(sale.lastIndexOf('/') + 1)}
-                </a>
-              </div>
+          {Array(Math.max(projectData.sales.length, projectData.funding.length, projectData.delivery.length, projectData.operations.length))
+            .fill(0)
+            .map((_, index) => (
+              <tr key={index}>
+                <td style={{ border: '1px solid #d2d3d4',color: '#4842e3',fontSize: '15px',fontWeight: 'normal' }}>
+                  {index < projectData.sales.length && (
+                    <a href={projectData.sales[index]} target="_blank" rel="noopener noreferrer">
+                      {projectData.sales[index].substring(projectData.sales[index].lastIndexOf('/') + 1)}
+                    </a>
+                  )}
+                </td>
+                <td style={{ border: '1px solid #d2d3d4',color: '#4842e3',fontSize: '15px',fontWeight: 'normal' }}>
+                  {index < projectData.funding.length && (
+                    <a href={projectData.funding[index]} target="_blank" rel="noopener noreferrer">
+                      {projectData.funding[index].substring(projectData.funding[index].lastIndexOf('/') + 1)}
+                    </a>
+                  )}
+                </td>
+                <td style={{ border: '1px solid #d2d3d4',color: '#4842e3',fontSize: '15px',fontWeight: 'normal' }}>
+                  {index < projectData.delivery.length && (
+                    <a href={projectData.delivery[index]} target="_blank" rel="noopener noreferrer">
+                      {projectData.delivery[index].substring(projectData.delivery[index].lastIndexOf('/') + 1)}
+                    </a>
+                  )}
+                </td>
+                <td style={{ border: '1px solid #d2d3d4',color: '#4842e3',fontSize: '15px',fontWeight: 'normal' }}>
+                  {index < projectData.operations.length && (
+                    <a href={projectData.operations[index]} target="_blank" rel="noopener noreferrer">
+                      {projectData.operations[index].substring(projectData.operations[index].lastIndexOf('/') + 1)}
+                    </a>
+                  )}
+                </td>
+              </tr>
             ))}
-          </td>
-          <td style={{ border: '1px solid #d2d3d4' }}>
-            {projectData.funding.map((fund, index) => (
-              <div key={index}>
-                <a href={fund} target="_blank" rel="noopener noreferrer">
-                {fund.substring(fund.lastIndexOf('/') + 1)}
+        </tbody>
+      </table>
+    )}
+  </Box>
+  
 
-                </a>
-              </div>
-            ))}
-          </td>
-          <td style={{ border: '1px solid #d2d3d4' }}>
-            {projectData.delivery.map((delivery, index) => (
-              <div key={index}>
-                <a href={delivery} target="_blank" rel="noopener noreferrer">
-                {delivery.substring(delivery.lastIndexOf('/') + 1)}
-
-                </a>
-              </div>
-            ))}
-          </td>
-          <td style={{ border: '1px solid #d2d3d4' }}>
-            {projectData.operations.map((operation, index) => (
-              <div key={index}>
-                <a href={operation} target="_blank" rel="noopener noreferrer">
-                {operation.substring(operation.lastIndexOf('/') + 1)}
-                </a>
-              </div>
-            ))}
-          </td>
-        </tr>
-      </tbody>
-      </table>}
-        </Box>
 
   )
 }

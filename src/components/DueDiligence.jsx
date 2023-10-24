@@ -9,6 +9,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { useToast } from '@chakra-ui/react';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import '../css/user/dueDiligence.css'
+import CancelPresentationIcon from '@mui/icons-material/CancelPresentation';
 
 const DueDiligence = () => {
     const [adoption,setAdoption] = useState([]);
@@ -218,7 +219,7 @@ const DueDiligence = () => {
     </FormControl>
 
     <FormControl mb={{ base: '8px', sm: '8px', lg: '10px' }}>
-    <FormLabel fontSize={{ base: '14px', sm: '14px', md: '16px', lg: '17px' }} color='gray.700'>
+    <FormLabel fontSize={{ base: '14px', sm: '14px', md: '16px', lg: '17px' }} color='gray.700' >
         Application/Workload Type
     </FormLabel>
     <Flex flexDir='column'  >
@@ -238,9 +239,6 @@ const DueDiligence = () => {
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
                     onFocus={() => setIsDropdownOpen(true)}
-                    onBlur={()=> setTimeout(() => {
-                        setIsDropdownOpen(false);
-                    }, 200)}
                     onKeyDown={(e) => handleInputKeyDownWorkload(e)}
                     pr="4.5rem"
                 />
@@ -258,6 +256,14 @@ const DueDiligence = () => {
                 {
                 isDropdownOpen && 
                 <Flex flexDir='column' >
+                    <Button
+                        mt='6px'
+                        size="sm"
+                        rightIcon={<CancelPresentationIcon />}
+                        onClick={()=>{setIsDropdownOpen(false);setSearchInput('')}}
+                        >
+                        Close Options
+                        </Button>  
                             {
                             filteredWorkloadType.map((item, ind) => (
                                 <Checkbox
@@ -295,11 +301,6 @@ const DueDiligence = () => {
                 value={searchInputTechStack}
                 onChange={(e) => setSearchInputTechStack(e.target.value)}
                 onFocus={() => setIsDropdownOpenTechStack(true)}
-                onBlur={() =>
-                    setTimeout(() => {
-                        setIsDropdownOpenTechStack(false);
-                    }, 200)
-                }
                 onKeyDown={(e) => handleInputKeyDownTechStack(e)}
                 pr="4.5rem"
             />
@@ -318,6 +319,14 @@ const DueDiligence = () => {
         </InputGroup>
         {isDropdownOpenTechStack && (
         <Flex flexDir="column">
+                    <Button
+                        mt='6px'
+                        size="sm"
+                        rightIcon={<CancelPresentationIcon />}
+                        onClick={()=>{setIsDropdownOpenTechStack(false);setSearchInputTechStack('')}}
+                        >
+                        Close Options
+                        </Button>  
             {filteredTechStack.map((item, ind) => (
                 <Checkbox
                     m="1px"

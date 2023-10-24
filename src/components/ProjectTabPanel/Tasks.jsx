@@ -19,6 +19,7 @@ import {
   Text,
   Th,
   Thead,
+  Tooltip,
   Tr,
 } from '@chakra-ui/react';
 import { ChevronDownIcon, SearchIcon } from '@chakra-ui/icons';
@@ -95,93 +96,78 @@ const Tasks = ({flag,setSelectedTask,setTaskDetail}) => {
             </Menu>
         </Box>
         </Box>
-  
-          {/* <table style={{ width: '100%',border: '1px solid gray',borderRadius: '5px' }}>
-            <thead>
-                <tr style={{border: '1px solid #d2d3d4',borderRadius: '5px',bg:'gray' }}>
-                <th style={{border: '1px solid #d2d3d4',backgroundColor: '#EDF2F7',fontWeight: '500'}}>Onboarded</th>
-                <th style={{border: '1px solid #d2d3d4',backgroundColor: '#EDF2F7',fontWeight: '500'}}>Completed</th>
-                <th style={{border: '1px solid #d2d3d4',backgroundColor: '#EDF2F7',fontWeight: '500'}}>In-progress</th>
-                <th style={{border: '1px solid #d2d3d4',backgroundColor: '#EDF2F7',fontWeight: '500'}}>Due</th>
-              </tr>
-            </thead>
-            <tbody>
-            {
-            projectData && projectData.map((phase)=> 
-                phase.modules.map((module,ind)=>
-                    {
-                        return module.tasks.map((task,ind)=> 
-                            <tr style={{border: '1px solid #d2d3d4',borderRadius: '5px' }}>
-                            <td style={{border: '1px solid #d2d3d4',borderRadius: '5px',color: '#3366CC',cursor: 'pointer' }} onClick={()=>handleSelect(phase,module,task)}>{task.taskId.name}</td>
-                            </tr>)
-                    })
-                  )
-            }
-            </tbody>
-          </table> */}
 
-      {loading? (
+    {loading? (
       <Flex justifyContent ='center'>
         <Spinner/>
       </Flex>) : 
-      <table style={{ width: '100%', border: '1px solid gray', borderRadius: '5px' }}>
-        <thead>
-          <tr style={{ border: '1px solid #d2d3d4', borderRadius: '5px', bg: 'gray' }}>
-            <th style={{ border: '1px solid #d2d3d4', backgroundColor: '#EDF2F7', fontWeight: '500' }}>Onboarded</th>
-            <th style={{ border: '1px solid #d2d3d4', backgroundColor: '#EDF2F7', fontWeight: '500' }}>Completed</th>
-            <th style={{ border: '1px solid #d2d3d4', backgroundColor: '#EDF2F7', fontWeight: '500' }}>In-progress</th>
-            <th style={{ border: '1px solid #d2d3d4', backgroundColor: '#EDF2F7', fontWeight: '500' }}>Due</th>
-          </tr>
-        </thead>
-        <tbody>
-          {projectData &&
-            projectData.map((phase) =>
-              phase.modules.map((module, ind) => {
-                return module.tasks.map((task, ind) => (
-                  <tr style={{ border: '1px solid #d2d3d4', borderRadius: '5px' }}>
-                    {(task.taskId.task_status === 'Onboarded' || !task.taskId.task_status) ? (
-                      <td style={{ border: '1px solid #d2d3d4', borderRadius: '5px', color: '#3366CC', cursor: 'pointer' }} onClick={() => handleSelect(phase, module, task)}>
-                        {task.taskId.name}
-                      </td>
-                    ): (<td style={{ border: '1px solid #d2d3d4', borderRadius: '5px', color: '#3366CC', cursor: 'pointer' }} onClick={() => handleSelect(phase, module, task)}>
-                    -
-                  </td>)}
+      <Flex flexDir='row' flexGrow='1' gap={0} style={{border: '1px solid #d2d3d4'}}>
+        <Flex flexDir='column' style={{borderRight: '1px solid #d2d3d4'}}  flexGrow='1' flexBasis= '100%' >
+            <Text color='#45474B' backgroundColor='#F5F7F8' fontWeight='500' p='4px' fontSize='md' borderBottom='1px solid #d2d3d4'>Onboarded</Text>
+            <Flex flexDir='column'>
+                {projectData &&
+                projectData.map((phase) =>
+                phase.modules.map((module, ind) => {
+                    return module.tasks.map((task, ind) => (
+                        (task.taskId.task_status === 'Onboarded' || !task.taskId.task_status) && (
+                        <Flex p='6px' flexDir='column' style={{ backgroundColor: 'white',borderBottom: '1px solid #d2d3d4',color: '#3366CC'}} onClick={() => handleSelect(phase, module, task)}>
+                            <Tooltip label={task.taskId.name}>
+                            <Text maxWidth={{base: '80px',sm: '100px',md: '130px',lg: '190px'}} style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',cursor: 'pointer'}}>{task.taskId.name}</Text>
+                            </Tooltip>
+                        </Flex>)))}))}
+            </Flex>
+        </Flex>
 
-                    {task.taskId.task_status === 'Completed'? (
-                      <td style={{ border: '1px solid #d2d3d4', borderRadius: '5px', color: '#3366CC', cursor: 'pointer' }} onClick={() => handleSelect(phase, module, task)}>
-                        {task.taskId.name}
-                      </td>
-                    ): 
-                    <td style={{ border: '1px solid #d2d3d4', borderRadius: '5px', color: '#3366CC', cursor: 'pointer' }} onClick={() => handleSelect(phase, module, task)}>
-                    - 
-                  </td>}
+        <Flex flexDir='column' style={{borderRight: '1px solid #d2d3d4'}}  flexGrow='1' flexBasis= '100%'>
+            <Text color='#45474B' backgroundColor='#F5F7F8' fontWeight='500' p='4px' fontSize='md' borderBottom='1px solid #d2d3d4'>Completed</Text>
+            <Flex flexDir='column'>
+                {projectData &&
+                projectData.map((phase) =>
+                phase.modules.map((module, ind) => {
+                    return module.tasks.map((task, ind) => (
+                        (task.taskId.task_status === 'Completed') && (
+                            <Flex p='6px' flexDir='column' style={{ backgroundColor: 'white',borderBottom: '1px solid #d2d3d4',color: '#3366CC'}} onClick={() => handleSelect(phase, module, task)}>
+                            <Tooltip label={task.taskId.name}>
+                            <Text maxWidth={{base: '80px',sm: '100px',md: '130px',lg: '190px'}} style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',cursor: 'pointer'}}>{task.taskId.name}</Text>
+                            </Tooltip>
+                        </Flex>)))}))}
+            </Flex>
+        </Flex>
 
-                    {task.taskId.task_status === 'In-progress'?(
-                      <td style={{ border: '1px solid #d2d3d4', borderRadius: '5px', color: '#3366CC', cursor: 'pointer' }} onClick={() => handleSelect(phase, module, task)}>
-                        {task.taskId.name}
-                      </td>
-                    ): <td style={{ border: '1px solid #d2d3d4', borderRadius: '5px', color: '#3366CC', cursor: 'pointer' }} onClick={() => handleSelect(phase, module, task)}>
-                    -
-                  </td>}
+        <Flex flexDir='column' style={{borderRight: '1px solid #d2d3d4'}}  flexGrow='1' flexBasis= '100%'>
+            <Text color='#45474B' backgroundColor='#F5F7F8' fontWeight='500' p='4px' fontSize='md' borderBottom='1px solid #d2d3d4'>InProgress</Text>
+            <Flex flexDir='column'>
+                {projectData &&
+                projectData.map((phase) =>
+                phase.modules.map((module, ind) => {
+                    return module.tasks.map((task, ind) => (
+                        (task.taskId.task_status === 'In-progress') && (
+                            <Flex p='6px' flexDir='column' style={{ backgroundColor: 'white',borderBottom: '1px solid #d2d3d4',color: '#3366CC'}} onClick={() => handleSelect(phase, module, task)}>
+                            <Tooltip label={task.taskId.name}>
+                            <Text maxWidth={{base: '80px',sm: '100px',md: '130px',lg: '190px'}} style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',cursor: 'pointer'}}>{task.taskId.name}</Text>
+                            </Tooltip>
+                        </Flex>)))}))}
+            </Flex>
+        </Flex>
 
-                    {task.taskId.task_status === 'Due'? (
-                      <td style={{ border: '1px solid #d2d3d4', borderRadius: '5px', color: '#3366CC', cursor: 'pointer' }} onClick={() => handleSelect(phase, module, task)}>
-                        {task.taskId.name}
-                      </td>
-                    ): (<td style={{ border: '1px solid #d2d3d4', borderRadius: '5px', color: '#3366CC', cursor: 'pointer' }} onClick={() => handleSelect(phase, module, task)}>
-                    -
-                  </td>)}
+        <Flex flexDir='column' flexGrow='1' flexBasis= '100%'>
+            <Text color='#45474B' backgroundColor='#F5F7F8' fontWeight='500' p='4px' fontSize='md' borderBottom='1px solid #d2d3d4'>Due</Text>
+            <Flex flexDir='column'>
+                {projectData &&
+                projectData.map((phase) =>
+                phase.modules.map((module, ind) => {
+                    return module.tasks.map((task, ind) => (
+                        (task.taskId.task_status === 'Due') && (
+                            <Flex p='6px' flexDir='column' style={{ backgroundColor: 'white',borderBottom: '1px solid #d2d3d4',color: '#3366CC'}} onClick={() => handleSelect(phase, module, task)}>
+                            <Tooltip label={task.taskId.name}>
+                            <Text maxWidth={{base: '80px',sm: '100px',md: '130px',lg: '190px'}} style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',cursor: 'pointer'}}>{task.taskId.name}</Text>
+                            </Tooltip>
+                        </Flex>)))}))}
+            </Flex>
+        </Flex>
 
-                  
-                  </tr>
-                ));
-              })
-            )}
-        </tbody>
-      </table>}
-
-
-        </Box>
+      </Flex>}
+    </Box>
     );
   };
   
