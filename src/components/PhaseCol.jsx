@@ -1,7 +1,36 @@
 import { Box, Button, Flex, Text } from '@chakra-ui/react'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 const PhaseCol = ({phase,num}) => {
+    const [uniqueCustomTask,setUniqueCustomTask] = useState([]);
+    const [uniqueStandardTask,setUniqueStandardTask] = useState([]);
+
+    function handleTask() {
+        const standardTask = [];
+        const customTask = [];
+    
+        phase.modules.forEach((module) => {
+            module.tasks.forEach((taskList) => {
+                if (taskList.taskId.task_type === "Custom") {
+                    customTask.push(taskList.taskId.task_actionName.toUpperCase());
+                } else if (taskList.taskId.task_type === "Standard") {
+                    standardTask.push(taskList.taskId.task_solutionid.name.toUpperCase());
+                }
+            });
+        });
+
+        console.log('Standard',standardTask);
+
+        setUniqueStandardTask(Array.from(new Set(standardTask)));
+        setUniqueCustomTask(Array.from(new Set(customTask)));
+        
+    }
+    
+    useEffect(() => {
+        handleTask();
+    }, []);
+    
+
   return (
     <>
 <Flex flexDir='column' minW='300px' style={{backgroundColor: '#edf0ee',borderRadius: '5px'}} flexGrow='1'>
@@ -28,20 +57,14 @@ const PhaseCol = ({phase,num}) => {
             <Text fontWeight={500} mb='6px' color='gray.500'>Solution/Script Leveraged</Text>
 
         <Flex gap={2} mb={2} flexWrap='wrap'>
-                {
-                    phase.modules.map((module,index)=>(
-                        module.tasks.map((taskList, taskInd) => (
-                            <div key={taskInd}>
-                            {taskList.taskId.task_type === "Custom" && (
-                                <Flex bg='#3182CE' borderRadius='5px' p='8px' pl='10px' pr='10px' color='white' fontWeight='500'>{taskList.taskId.task_actionName}</Flex>
-                                )}
-                            {taskList.taskId.task_type === "Standard" && (
-                                <Flex bg='#DD6B20' borderRadius='5px' p='8px' pl='10px' pr='10px' color='white' fontWeight='500'>{taskList.taskId.task_solutionid.name}</Flex>
-                                )}
-                        </div>
+                    {uniqueStandardTask && uniqueStandardTask.map((task,ind)=>(
+                        <Flex bg='#DD6B20' borderRadius='5px' p='8px' pl='10px' pr='10px' color='white' fontWeight='500'>{task}</Flex>
                         ))
-                        ))      
                     }
+                            {uniqueCustomTask && uniqueCustomTask.map((task,ind)=>(
+                                <Flex bg='#3182CE' borderRadius='5px' p='8px' pl='10px' pr='10px' color='white' fontWeight='500'>{task}</Flex>
+                                ))
+                            }
                     </Flex>   
             </Flex>
             </Box>
