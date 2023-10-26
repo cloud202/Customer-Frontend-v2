@@ -34,6 +34,7 @@ const MyProject = () => {
           dispatch(resetResponseData());
           dispatch(resetProjectId());
           const {data} =  await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/project/${project._id}`);
+          
           const projectResponse = {
             "project_name": data.project_name,
             "project_industry": data.project_industry.name,

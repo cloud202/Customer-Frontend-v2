@@ -22,15 +22,19 @@ import { roles } from '../../data/role';
 import { Add } from '@mui/icons-material';
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import PersonRemoveAlt1Icon from '@mui/icons-material/PersonRemoveAlt1';
-
+import HistoryIcon from '@mui/icons-material/History';
+import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
+import HistoryStepper from './HistoryStepper';
 
 const Overview = () => {
+  const [history,setHistory] = useState('');
   const { isOpen, onOpen, onClose } = useDisclosure()
   const btnRef = React.useRef()
   const isMember = useSelector((state)=> state.token.isMember);
 
 
   const { isOpen: isSecondDrawerOpen, onOpen: onSecondDrawerOpen, onClose: onSecondDrawerClose } = useDisclosure();
+  const { isOpen: isHistoryOpen, onOpen: onHistoryOpen, onClose: onHistoryClose } = useDisclosure();
   const secondModalBtnRef = React.useRef();
   
   const [adoption,setAdoption] = useState([]);
@@ -125,7 +129,6 @@ async function fetchPhases(){
     setFormData(data);
     setName(data.project_name);
     setDetails(data.details);
-    console.log('Data',data);
     
     var start_date = data.start_date;
     var end_date = data.end_date;
@@ -143,17 +146,28 @@ async function fetchPhases(){
   }
   }
 
+  async function fetchHistory(){
+    try{
+    const {data} = await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/project/${projectId}/history`);
+    console.log('Data history',data);
+    setHistory(data);
+  }catch(e){
+    console.log("error fetching project history",e);
+  }
+  }
+  
   useEffect(()=>{
-    fetchFormData();  
-  },[])
-
-    useEffect(()=>{
+      fetchFormData();  
         fetchData();
     },[])
 
     useEffect(()=>{
         fetchPhases();
     },[fetchPhases])
+
+    useEffect(()=>{
+        fetchHistory();
+    },[])
 
     const userInfo = useSelector((state)=> state.token.userInfo);
     // const formData = useSelector((state)=> state.dueDiligenceResponse.dueDiligence);
@@ -191,7 +205,6 @@ async function fetchPhases(){
           "details": details
         }
         const {data}  = await axios.patch(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/project/update/${projectId}`,project);
-        console.log('Updated Data',data);
         toast({
           title: 'Project Updated Successfully.',
           status: 'success',
@@ -345,6 +358,7 @@ async function fetchPhases(){
       console.log('Error fetching member data',e);
     }
   }
+
   useEffect(() => {
     fetchMemberData();
   }, [])
@@ -375,14 +389,6 @@ async function fetchPhases(){
                     <span style={{ color: 'gray' }}>Days Remaining : </span>{effortEstimated? effortEstimated + " Days": "Not available"}
                     </Text>
 
-                    {/* <Text fontWeight={500}>
-                    <span style={{ color: 'gray' }}>Industry : </span>{formData.project_industry? formData.project_industry.name : "Not available"}
-                    </Text>
-
-                    <Text fontWeight={500}>
-                    <span style={{ color: 'gray' }}>Workload Type : </span>{formData.project_WT?.length>0 ? formData.project_WT.map((workload)=> workload).join(', '): 'Not available'}
-                    </Text> */}
-
                     <Text fontWeight={500}>
                     <span style={{ color: 'gray' }}>Project Details : </span>{formData.details? formData.details : 'Not available'}
                     </Text>
@@ -407,9 +413,15 @@ async function fetchPhases(){
 
                 </Box>
                 <Box>
-                    <Heading size='xs' textTransform='uppercase'>
-                    Task Status Report
-                    </Heading>
+                    <Flex justifyContent='space-between'>
+                      <Heading size='xs' textTransform='uppercase'>
+                      Task Status Report
+                      </Heading>
+                      <span style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontWeight: '500', color: 'blue' }} onClick={onHistoryOpen}>
+                        <HistoryIcon style={{ marginRight: '4px' }}/>
+                        History
+                      </span>
+                    </Flex>
                     <Box>
                         <Text pt='2' fontWeight={500}>
                         <span style={{ color: 'gray' }}>Onboarded : </span> {totalTaskCount - (completedTaskCount+ inProgressCount+ dueCount)}
@@ -432,7 +444,7 @@ async function fetchPhases(){
                     </Heading>
 
                     <Text pt='2' fontWeight={500}>
-                      {!isMember && <span style={{ color: 'blue',cursor: 'pointer' }} onClick={onSecondDrawerOpen}>Add New Team Member</span>}
+                      {!isMember && <span style={{ display: 'flex', alignItems: 'center' ,color: 'blue',cursor: 'pointer' }} onClick={onSecondDrawerOpen}><PersonAddAltIcon style={{ marginRight: '6px' }}/> Add New Team Member</span>}
                     </Text>
                   </Flex>
                     <Box>
@@ -624,6 +636,24 @@ async function fetchPhases(){
                     </TableContainer>
 
             </DrawerBody>
+            
+          </DrawerContent>
+        </Drawer>
+
+      <Drawer isOpen={isHistoryOpen} placement="bottom" onClose={onHistoryClose}>
+          <DrawerOverlay />
+          <DrawerContent>
+          <DrawerCloseButton/>
+            <DrawerHeader>Project History</DrawerHeader>
+            <DrawerBody>
+                  <HistoryStepper history={history} />
+            </DrawerBody>
+
+            <DrawerFooter>
+                    <Button variant='ghost' onClick={onHistoryClose}>
+                      Close
+                    </Button>
+            </DrawerFooter>
             
           </DrawerContent>
         </Drawer>

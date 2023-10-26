@@ -200,9 +200,13 @@ const Phases = () => {
                         </Text>
 
                         <Text pt='2' fontWeight={500}>
-                        <span style={{ color: 'gray' }}>Tasks :</span> {phase.modules.map((module)=> 
+                        <span style={{ color: 'gray' }}>Tasks</span> 
+                            <Box ml='12px'>
+
+                            {phase.modules.map((module)=> 
                                     module.tasks.map((task)=> 
-                                    task.taskId.name)).join(', ') }
+                                    <li>{task.taskId.name}</li>))}
+                                    </Box>
                         </Text>
 
                         <Text pt='2' fontWeight={500}>
