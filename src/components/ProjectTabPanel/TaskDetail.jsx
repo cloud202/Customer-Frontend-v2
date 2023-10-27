@@ -62,8 +62,6 @@ if (taskDetail.task.taskId.due_on) {
   var due_date = '';
 }
 
-console.log('Task Detail', taskDetail);
-
 const [startDate, setStartDate] = useState(start_date);
 const [dueDate, setDueDate] = useState(due_date);
 
@@ -109,6 +107,7 @@ const [dueDate, setDueDate] = useState(due_date);
     try{
       setLoading(true);
       const updatedTask = {
+        customerId: customerId,
         projectOid: projectId,
         phaseOid: taskDetail.phase._id,
         moduleOid: taskDetail.module._id,

@@ -59,10 +59,10 @@ const Overview = () => {
 //   let completedTaskCount=0;
 //   let totalTaskCount = 0;
 
-  async function fetchData(){
+async function fetchData(){
     try{
        const adoptionApproach = await axios.get(`${process.env.REACT_APP_API_URL}/api/admin/master/project_type`);
-        setAdoption(adoptionApproach.data);
+      setAdoption(adoptionApproach.data);
 
     }catch(e){
         console.log('Error fetching data',e);
@@ -147,6 +147,7 @@ async function fetchPhases(){
   }
 
   async function fetchHistory(){
+    console.log('Fetch Historryy');
     try{
     const {data} = await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/project/${projectId}/history`);
     console.log('Data history',data);
@@ -199,6 +200,7 @@ async function fetchPhases(){
     const handleSubmit= async ()=>{
       try{
         const project = {
+          "customerId": customerId,
           "project_name": name,
           "start_date": startDate,
           "end_date": dueDate,
@@ -417,7 +419,7 @@ async function fetchPhases(){
                       <Heading size='xs' textTransform='uppercase'>
                       Task Status Report
                       </Heading>
-                      <span style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontWeight: '500', color: 'blue' }} onClick={onHistoryOpen}>
+                      <span style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontWeight: '500', color: 'blue' }} onClick={()=>{fetchHistory(); onHistoryOpen()}}>
                         <HistoryIcon style={{ marginRight: '4px' }}/>
                         History
                       </span>
@@ -646,7 +648,7 @@ async function fetchPhases(){
           <DrawerCloseButton/>
             <DrawerHeader>Project History</DrawerHeader>
             <DrawerBody>
-                  <HistoryStepper history={history} />
+                  <HistoryStepper history={history} formData={formData}/>
             </DrawerBody>
 
             <DrawerFooter>

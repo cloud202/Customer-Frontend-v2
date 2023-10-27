@@ -2,7 +2,7 @@ import { Box, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import '../css/user/tableModernization.css'
+import '../css/user/tableModernisation.css'
 import { setProjectData } from '../features/formData/selectDueDiligence';
 import '../css/user/boxShadow.css'
 
@@ -50,14 +50,14 @@ const Roadmap = () => {
     return (
         <>
             <Text mb='15px' textAlign='center' p='5px' bg='#389785' color='white' borderRadius='5px' fontSize={{ base: '16px', sm: '18px', md: '25px', lg: '25px' }}>
-                {formData.name.toUpperCase()} Modernization Roadmap Summary
+                {formData.name.toUpperCase()} Modernisation Roadmap Summary
             </Text>
         {/* New table without alternative color  */}
         <Box style={{overflowX: 'auto'}} className='box-shadow'>   
         <table className="table-modern">
                 <thead>
                     <tr>
-                        <th colSpan='100%'>Modernization Phases</th>
+                        <th colSpan='100%'>Modernisation Phases</th>
                     </tr>
                     <tr>
                         {table.phases && table.phases.map((phase, index) => (
@@ -67,7 +67,7 @@ const Roadmap = () => {
                         ))}
                     </tr>
                     <tr>
-                        <th colSpan='100%' >Modules Under Phases</th>
+                        <th colSpan='100%'>Modules Under Phases</th>
                     </tr>
                     <tr>
                         {table.phases && table.phases.map((phase,index)=>
@@ -108,7 +108,7 @@ const Roadmap = () => {
         {/* <table className="table-modern">
                 <thead>
                     <tr>
-                        <th colSpan='100%' style={{color: '#313030'}}>Modernization Phases</th>
+                        <th colSpan='100%' style={{color: '#313030'}}>Modernisation Phases</th>
                     </tr>
                     <tr>
                         {phases.map((phase, index) => (

@@ -145,13 +145,13 @@ const Modules = () => {
       setLoading(true);
 
       const updateModule = {
+        "customerId": customerId,
           "projectOid": projectId,
           "phaseOid": phaseId,
           "moduleOid": moduleId,
           "updateFields":{
               "name": name,
               "description": details,
-              "scope": "none",
               "startDate": startDate,
               "dueOn": dueDate,
           }

@@ -33,7 +33,7 @@ const Roadmap = () => {
   return (
     <>
     <Text mb='15px' textAlign='center' p='5px' bg='#389785' color='white' borderRadius='5px' fontSize={{ base: '16px', sm: '18px', md: '25px', lg: '25px' }}>
-        {formData.name.toUpperCase()} Modernization Roadmap Summary
+        {formData.name.toUpperCase()} Modernisation Roadmap Summary
     </Text>
 
     <Box style={{ overflowX: 'auto',backgroundColor: '#fcfcfc'}} className='box-shadow'>

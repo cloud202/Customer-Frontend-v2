@@ -74,12 +74,12 @@ const Phases = () => {
       setLoading(true);
 
       const updatePhase = {
+          "customerId": customerId,
           "projectOid": projectId,
           "phaseOid": phaseId,
           "updateFields":{
               "name": name,
               "description": details,
-              "scope": "none",
               "startDate": startDate,
               "dueOn": dueDate,
           }

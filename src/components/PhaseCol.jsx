@@ -19,8 +19,6 @@ const PhaseCol = ({phase,num}) => {
             });
         });
 
-        console.log('Standard',standardTask);
-
         setUniqueStandardTask(Array.from(new Set(standardTask)));
         setUniqueCustomTask(Array.from(new Set(customTask)));
         

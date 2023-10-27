@@ -25,7 +25,7 @@ const MyProject = () => {
     const handleNext = async (project)=>{
         dispatch(resetFormData());
         try{
-          console.log(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/project/${project._id}/phases`)
+          console.log(`MyProject + ${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/project/${project._id}/phases`)
           const response =  await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/project/${project._id}/phases`);
           // const response =  await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/${project._id}/phases`);
           dispatch(setPhasesData(response.data));
@@ -101,7 +101,7 @@ const MyProject = () => {
         {!projectFound && !isMember &&
         <Flex flexDir='column' w='100%' h='150px' alignItems='center' justifyContent='center' gap={4}>
         <Text fontSize='xl'>
-            Looks like you haven't created any project yet. Start your Modernization Journey with New Project 
+            Looks like you haven't created any project yet. Start your Modernisation Journey with New Project 
         </Text>
         <Link to='/newproject'>
             <Button colorscheme='blue'>New Project</Button>
