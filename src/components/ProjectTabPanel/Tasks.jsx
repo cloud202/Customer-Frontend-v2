@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import {
   Box,
   Button,
+  Checkbox,
   Divider,
   Flex,
   Input,
@@ -14,6 +15,7 @@ import {
   MenuItem,
   MenuList,
   Spinner,
+  Stack,
   Table,
   Tbody,
   Text,
@@ -30,6 +32,7 @@ import TaskDetail from './TaskDetail';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import axios from 'axios';
+import { Close } from '@mui/icons-material';
 
 const Tasks = ({flag,setSelectedTask,setTaskDetail}) => {
     const navigate = useNavigate();
@@ -39,6 +42,33 @@ const Tasks = ({flag,setSelectedTask,setTaskDetail}) => {
     // const projectData = useSelector((state) => state.phases.phases);
     const [projectData,setProjectData] = useState(null);
     const [loading,setLoading] = useState(true);
+    const [selectedPhases, setSelectedPhases] = useState([]);
+    const [selectedModules,setSelectedModules] = useState([]);
+
+    const [searchValue, setSearchValue] = useState('');
+    const [filteredTasks, setFilteredTasks] = useState([]);
+
+    const handleSearchChange = (event) => {
+      const searchInput = event.target.value;
+      setSearchValue(searchInput);
+
+      if(searchInput===''){
+        fetchData();
+        return;
+      }
+
+      const updatedProjectData = projectData.map((phase) => ({
+        ...phase,
+        modules: phase.modules.map((module) => ({
+          ...module,
+          tasks: module.tasks.filter((task) =>
+            task.taskId.name.toLowerCase().includes(searchInput.toLowerCase())
+          ),
+        })),
+      }));
+      setProjectData(updatedProjectData);
+    };
+    
     
     const handleSelect = (phase,module,task)=>{
       setTaskDetail({
@@ -50,11 +80,29 @@ const Tasks = ({flag,setSelectedTask,setTaskDetail}) => {
       
     }
 
+    const handlePhaseChange = (phaseId) => {
+      if (selectedPhases.includes(phaseId)) {
+        setSelectedPhases(selectedPhases.filter((id) => id !== phaseId));
+      } else {
+        setSelectedPhases([...selectedPhases, phaseId]);
+      }
+    };
+
+    const handleModuleChange = (moduleId)=>{
+      if(selectedModules.includes(moduleId)){
+        setSelectedModules(selectedModules.filter((id)=> id!==moduleId));
+      }else{
+        setSelectedModules([...selectedModules,moduleId]);
+      }
+    }
+    
+
     async function fetchData(){
       try{
         const {data} = await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/project/${projectId}/phases`);
         // const {data} = await axios.get(`${process.env.REACT_APP_API_URL_CUSTOMER}/api/customer/${customerId}/project/${projectId}/phases`);
         setProjectData(data);
+        console.log('data task',data);
       }catch(e){
         console.log("Error fetching task",e);
       }
@@ -72,26 +120,41 @@ const Tasks = ({flag,setSelectedTask,setTaskDetail}) => {
               <SearchIcon color="gray.300" />
             </InputLeftElement>
             <Input
-              placeholder="Search Tasks"
-               />
+            placeholder="Search Tasks"
+            value={searchValue}
+          />
+
           </InputGroup>
 
           <Box display='flex' gap={2} mb='6px' flexWrap='wrap'>
           <Menu >
             <MenuButton as={Button} rightIcon={<FilterListIcon />}>
-                All Phases
+                Filter Phases
             </MenuButton>
-            <MenuList>
-                <MenuItem>All Phases</MenuItem>
+            <MenuList >
+              <Stack spacing={1} >
+                {
+                  projectData && projectData.map((phase) => 
+                  <Checkbox key={phase._id} pl='4px' _hover={{backgroundColor: '#EDF2F7'}} isChecked={selectedPhases.includes(phase._id)}
+                  onChange={() => handlePhaseChange(phase._id)}>{phase.phasesId.name}</Checkbox>)
+                }
+                </Stack>
             </MenuList>
             </Menu>
 
         <Menu>
             <MenuButton as={Button} rightIcon={<FilterListIcon />}>
-                All Modules
+               Filter Modules
             </MenuButton>
             <MenuList>
-            <MenuItem >All Modules</MenuItem>
+              <Stack spacing={1}>
+            {
+              projectData && projectData.map((phase) => 
+              phase.modules.map((module)=>{
+                return <Checkbox key={module._id} pl='4px' _hover={{backgroundColor: '#EDF2F7'}} isChecked={selectedModules.includes(module._id)} onChange={()=> handleModuleChange(module._id)}>{module.moduleId.name}</Checkbox>
+              }))
+            }
+            </Stack>
             </MenuList>
             </Menu>
         </Box>
@@ -107,8 +170,8 @@ const Tasks = ({flag,setSelectedTask,setTaskDetail}) => {
             <Flex flexDir='column'>
                 {projectData &&
                 projectData.map((phase) =>
-                phase.modules.map((module, ind) => {
-                    return module.tasks.map((task, ind) => (
+                (selectedPhases.includes(phase._id) || selectedPhases.length===0) && phase.modules.map((module, ind) => {
+                    return (selectedModules.includes(module._id) || selectedModules.length===0) && module.tasks.map((task, ind) => (
                         (task.taskId.task_status === 'Onboarded' || !task.taskId.task_status) && (
                         <Flex p='6px' flexDir='column' style={{ backgroundColor: 'white',borderBottom: '1px solid #d2d3d4',color: '#3366CC'}} onClick={() => handleSelect(phase, module, task)}>
                             <Tooltip label={task.taskId.name}>
@@ -123,8 +186,8 @@ const Tasks = ({flag,setSelectedTask,setTaskDetail}) => {
             <Flex flexDir='column'>
                 {projectData &&
                 projectData.map((phase) =>
-                phase.modules.map((module, ind) => {
-                    return module.tasks.map((task, ind) => (
+                (selectedPhases.includes(phase._id) || selectedPhases.length===0) && phase.modules.map((module, ind) => {
+                    return (selectedModules.includes(module._id) || selectedModules.length===0) && module.tasks.map((task, ind) => (
                         (task.taskId.task_status === 'Completed') && (
                             <Flex p='6px' flexDir='column' style={{ backgroundColor: 'white',borderBottom: '1px solid #d2d3d4',color: '#3366CC'}} onClick={() => handleSelect(phase, module, task)}>
                             <Tooltip label={task.taskId.name}>
@@ -139,8 +202,8 @@ const Tasks = ({flag,setSelectedTask,setTaskDetail}) => {
             <Flex flexDir='column'>
                 {projectData &&
                 projectData.map((phase) =>
-                phase.modules.map((module, ind) => {
-                    return module.tasks.map((task, ind) => (
+                (selectedPhases.includes(phase._id) || selectedPhases.length===0) && phase.modules.map((module, ind) => {
+                    return (selectedModules.includes(module._id) || selectedModules.length===0) && module.tasks.map((task, ind) => (
                         (task.taskId.task_status === 'In-progress') && (
                             <Flex p='6px' flexDir='column' style={{ backgroundColor: 'white',borderBottom: '1px solid #d2d3d4',color: '#3366CC'}} onClick={() => handleSelect(phase, module, task)}>
                             <Tooltip label={task.taskId.name}>
@@ -155,8 +218,8 @@ const Tasks = ({flag,setSelectedTask,setTaskDetail}) => {
             <Flex flexDir='column'>
                 {projectData &&
                 projectData.map((phase) =>
-                phase.modules.map((module, ind) => {
-                    return module.tasks.map((task, ind) => (
+                (selectedPhases.includes(phase._id) || selectedPhases.length===0) && phase.modules.map((module, ind) => {
+                    return (selectedModules.includes(module._id) || selectedModules.length===0) && module.tasks.map((task, ind) => (
                         (task.taskId.task_status === 'Due') && (
                             <Flex p='6px' flexDir='column' style={{ backgroundColor: 'white',borderBottom: '1px solid #d2d3d4',color: '#3366CC'}} onClick={() => handleSelect(phase, module, task)}>
                             <Tooltip label={task.taskId.name}>

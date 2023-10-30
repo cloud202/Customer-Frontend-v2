@@ -16,16 +16,14 @@ const Sidebar = () => {
     const location = useLocation();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const isMember = useSelector((state)=> state.token.isMember);
-    console.log('isMember',isMember);
 
       const sidebarItems = [
         { label: "New Project", route: "/newproject",icon: AddBoxOutlinedIcon },
         { label: "My Projects", route: "/myproject",icon: RecentActorsIcon },
         { label: "GenAI Tools", route: "/admin/phase",icon: PsychologyIcon },
         { label: "Business Case Solution", route: "/admin/module",icon: BusinessCenterOutlinedIcon },
-        { label: "Carbon Footprint Calculator", route: "/admin/task",icon: CalculateOutlinedIcon },
+        { label: "Cloud Intelligence Dashboard", route: "/admin/task",icon: CalculateOutlinedIcon },
         { label: "Architecture Centre", route: "/admin/solution",icon: RoofingOutlinedIcon },
-        { label: "Solution Library", route: "/admin/customer",icon: CalendarIcon },
         { label: "Knowledge Base", route: "/admin/customer",icon: MenuBookOutlinedIcon },
       ];
 

@@ -2,7 +2,7 @@ import { Box, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import '../css/user/tableModernisation.css'
+import '../css/user/tableModernization.css'
 import { setProjectData } from '../features/formData/selectDueDiligence';
 import '../css/user/boxShadow.css'
 
